@@ -1,3 +1,4 @@
+var u = require('util');
 var R = require('ramda');
 var pp = require('prettyjson');
 
@@ -34,10 +35,10 @@ var normalize = function(f) {
 			var t = doc[type.opts.target];
 		
 			if(!s)
-				throw new Error('Missing source field ' + type.opts.source);
+				throw new Error(u.format("Missing source field '%s'", type.opts.source));
 		
 			if(!t)
-				throw new Error('Missing target field ' + type.opts.target);
+				throw new Error(u.format("Missing target field '%s'", type.opts.target));
 		
 			var source_id = dataset.normalizeId(s);
 			var target_id = dataset.normalizeId(t);
