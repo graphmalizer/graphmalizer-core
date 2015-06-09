@@ -3,66 +3,87 @@ some sort of graphmalizer, take sets of documents into elasticsearch and neo.
 
 see [ABOUT](ABOUT.md)
 
+
+[typedefs](conf/typedefs.js)
+
+```
+exports.PIT = {
+	node: {
+		id: 'hgId'
+	}
+}
+
+exports.LIES_IN = {
+	edge: {
+		source: 'from',
+		target: 'to'
+	}
+}
+```
+
+mapping to ES, Neo
+
+
 ```
 ------------------------------
-[32mdataset: [39m bag.nl.straten
-[32mtype: [39m    LIES_IN
-[32mid: [39m      [90mnull[39m
-[32mdocument: [39m
-  [32mfrom: [39m2345
-  [32mto: [39m  foo/234
+dataset:  bag.nl.straten
+type:     LIES_IN
+id:       null
+document:
+  from: 2345
+  to:   foo/234
 ------------------------------
-[32mES: [39m
-  [32mindex: [39mbag
-  [32mtype: [39m LIES_IN
-  [32mid: [39m   bag/bag.2345--LIES_IN--foo.234
-[32mNeo: [39m
-  [32mlabels: [39m
-    [32m- [39mT_LIES_IN
-    [32m- [39mI_bag.nl.straten
-    [32m- [39m__
-  [32mid: [39m    bag/bag.2345--LIES_IN--foo.234
-  [32msource: [39mbag/2345
-  [32mtarget: [39mfoo/234 
+ES:
+  index: bag
+  type:  LIES_IN
+  id:    bag/bag.2345--LIES_IN--foo.234
+Neo:
+  labels:
+    - T_LIES_IN
+    - I_bag.nl.straten
+    - __
+  id:     bag/bag.2345--LIES_IN--foo.234
+  source: bag/2345
+  target: foo/234
 
 
 ------------------------------
-[32mdataset: [39m bag.nl.straten
-[32mtype: [39m    LIES_IN
-[32mid: [39m      123
-[32mdocument: [39m
-  [32mfrom: [39m2345
-  [32mto: [39m  foo/234
+dataset:  bag.nl.straten
+type:     LIES_IN
+id:       123
+document:
+  from: 2345
+  to:   foo/234
 ------------------------------
-[32mES: [39m
-  [32mindex: [39mbag
-  [32mtype: [39m LIES_IN
-  [32mid: [39m   bag/123
-[32mNeo: [39m
-  [32mlabels: [39m
-    [32m- [39mT_LIES_IN
-    [32m- [39mI_bag.nl.straten
-    [32m- [39m__
-  [32mid: [39m    bag/123
-  [32msource: [39mbag/2345
-  [32mtarget: [39mfoo/234 
+ES:
+  index: bag
+  type:  LIES_IN
+  id:    bag/123
+Neo:
+  labels:
+    - T_LIES_IN
+    - I_bag.nl.straten
+    - __
+  id:     bag/123
+  source: bag/2345
+  target: foo/234
 
 
 ------------------------------
-[32mdataset: [39m bag.nl.straten
-[32mtype: [39m    PIT
-[32mid: [39m      123
-[32mdocument: [39m
-  [32ma: [39m[34m2345[39m
+dataset:  bag.nl.straten
+type:     PIT
+id:       123
+document:
+  a: 2345
 ------------------------------
-[32mES: [39m
-  [32mindex: [39mbag
-  [32mtype: [39m PIT
-  [32mid: [39m   bag/123
-[32mNeo: [39m
-  [32mlabels: [39m
-    [32m- [39mT_PIT
-    [32m- [39mI_bag.nl.straten
-    [32m- [39m__
-  [32mid: [39m    bag/123 
+ES:
+  index: bag
+  type:  PIT
+  id:    bag/123
+Neo:
+  labels:
+    - T_PIT
+    - I_bag.nl.straten
+    - __
+  id:     bag/123
 ```
