@@ -1,6 +1,8 @@
 // HTTP frontend
+var R = require('ramda');
 var Q = require('kew');
 var c = require('chalk');
+var u = require('util');
 var pp = require('prttty');
 
 var mach = require('mach');
@@ -10,33 +12,41 @@ app.use(mach.logger);
 app.use(mach.params);
 
 // standardized answer
-var answer = function(conn, promise){
-	return promise
-		.then(function(data){
-			return conn.json(200, {ok: true, data: data})
-		})
-		.fail(function(err) {
-			console.error(c.red('ERR'), c.grey('=>'), err);
-			return conn.json(500, {ok: false,
-				error: err.message,
-				stacktrace: err.stack.split(/\n\s*/)
+var answer = function(mkPromise){
+	return function(conn){
+		return mkPromise(conn )
+			.then(function(data){
+				return conn.json(200, {ok: true, data: data})
 			})
-		});
+			.fail(function(err) {
+				console.error(c.red('ERR'), c.grey('=>'), err);
+				return conn.json(500, {ok: false,
+					error: err.message,
+					stacktrace: err.stack.split(/\n\s*/)
+				})
+			});
+	}
 }
 
 app.get('/', function (conn) {
 	return conn.json(200, {ok: true});
 });
 
-var mapping = require('./mapping')
+// load resources, generate standardized answer
+var U = R.mapObj(answer, require('./resources'));
 
-app.post('/:dataset/:type', function(conn){
-	var args = conn.params;
-	console.log(pp.render(args));
-	return answer(conn, Q.fcall(function(){
-		return mapping.map(args.dataset, args.type, args.id, args.doc);
-	}));
-})
+// new doc, generate id
+app.post('/:dataset/:type/', U.POST); 
+
+// new doc, specify id
+app.post('/:dataset/:type/:id', U.POST);
+
+// update document
+app.put('/:dataset/:type/:id', U.PUT);
+
+// delete document
+app.delete('/:dataset/:type/:id', U.DELETE);
+
 
 app.get('/node/neo-id/:id', function(conn){	
 	return answer(conn, Graph({

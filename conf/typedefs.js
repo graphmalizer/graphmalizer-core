@@ -5,9 +5,7 @@
 // array of ~> concat
 
 exports.PIT = {
-	node: {
-		id: 'hgId'
-	}
+	node: {}
 }
 
 // if you don't specify and ID for edge,

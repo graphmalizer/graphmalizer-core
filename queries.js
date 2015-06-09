@@ -19,10 +19,14 @@ var splitEvery = require('./splitEvery');
 
 // split on --- and parse front matter/querystring
 var queryParser = R.compose(
+	R.reduce(function(acc, val){
+		acc[val.metadata.name] = val;
+		return acc;
+	}, {}),
 	R.map(function(query){
 		return {
 			metadata: YAML.parse(query[0].trim()),
-			query: query[1].trim()
+			query_string: query[1].trim()
 		}
 	}),
 	splitEvery(2),

@@ -24,15 +24,27 @@ var hashOf = function(things){
 	type ~> Type
 */
 var normalize = function(f) {
-	return function(d, ty, id, doc)
+	return function(d, ty, id, ps, pt, doc)
 	{
 		var dataset = Dataset.cget(d);
 		var type = Type.cget(ty);
+
+		// nodes must have an id?
+		if(type.isNode){
+			var i = id || (type.opts.id && doc[type.opts.id]);
+
+			if(!i)
+				throw new Error(u.format('Must specify id when creating a node! (doc.%s)', type.opts.id));
 		
+			return f(dataset, type, dataset.normalizeId(id), undefined, undefined, doc);		
+		}
+
+		// we are dealing with an edge
 		if(type.isEdge){
-			// we are dealing with an edge, lookup source/targets
-			var s = doc[type.opts.source];
-			var t = doc[type.opts.target];
+			// if source/target are not specified as parameters,
+			// look them up in the document
+			var s = ps;// || doc[type.opts.source];
+			var t = pt;// || doc[type.opts.target];
 		
 			if(!s)
 				throw new Error(u.format("Missing source field '%s'", type.opts.source));
@@ -52,12 +64,6 @@ var normalize = function(f) {
 
 			return f(dataset, type, dataset.normalizeId(canonical_id), source_id, target_id, doc);		
 		}
-		
-		if(type.isNode){
-			if(!id)
-				throw new Error('Must specify id when creating a node!');
-			return f(dataset, type, dataset.normalizeId(id), undefined, undefined, doc);		
-		}
 	} 
 }
 
@@ -68,7 +74,7 @@ exports.ES_map = normalize(
 			index: dataset.root,
 			type: type.name,
 			id: id,
-			body: body
+			body: doc
 		};
 	}
 );
@@ -84,12 +90,14 @@ exports.Neo_map = normalize(
 			],
 			params: doc,
 			id: id,
-			source_id: source_id,
-			target_id: target_id
+			isNode: true,
+			isEdge: false
 		};
 
 		// add edge info
 		if(type.isEdge) {
+			base.isNode = false;
+			base.isEdge = true;
 			base.source = source_id;
 			base.target = target_id;
 		}
@@ -98,9 +106,9 @@ exports.Neo_map = normalize(
 	}	
 );
 
-exports.map = function(dataset, type, id, doc){
+exports.map = function(dataset, type, id, s, t, doc){
 	return {
-		ES: exports.ES_map(dataset, type, id, doc),
-		Neo: exports.Neo_map(dataset, type, id, doc)
+		Elastic: exports.ES_map(dataset, type, id, s, t, doc),
+		Neo4J: exports.Neo_map(dataset, type, id, s, t, doc)
 	}
 }
