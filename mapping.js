@@ -43,7 +43,9 @@ var normalize = function(f) {
 		}
 		
 		if(type.isNode){
-			return f(dataset, type, dataset.normalizeId(id), null, null, doc);		
+			if(!id)
+				throw new Error('Must specify id when creating a node!');
+			return f(dataset, type, dataset.normalizeId(id), undefined, undefined, doc);		
 		}
 	} 
 }
