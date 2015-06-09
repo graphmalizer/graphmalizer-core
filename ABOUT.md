@@ -27,7 +27,7 @@ provide multi-tenancy or to avoid global scope pollution. This is left out for b
 
 Every node/edge gets a label `:_` and a *glui*, Graph label-unique identifier.
 
-	CREATE CONSTRAINT ON (n:§) ASSERT n.glui IS UNIQUE
+	CREATE CONSTRAINT ON (n:_) ASSERT n.glui IS UNIQUE
 
 - Index = label `:I_DATASETNAME`
 - Type = label `:T_TYPENAME`
