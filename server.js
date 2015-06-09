@@ -1,7 +1,7 @@
 // HTTP frontend
 var Q = require('kew');
 var c = require('chalk');
-var pp = require('prettyjson');
+var pp = require('prttty');
 
 var mach = require('mach');
 var app = mach.stack();
@@ -17,7 +17,10 @@ var answer = function(conn, promise){
 		})
 		.fail(function(err) {
 			console.error(c.red('ERR'), c.grey('=>'), err);
-			return conn.json(500, {ok: false, error: err.message})
+			return conn.json(500, {ok: false,
+				error: err.message,
+				stacktrace: err.stack.split(/\n\s*/)
+			})
 		});
 }
 
