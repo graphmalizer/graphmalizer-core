@@ -5,13 +5,23 @@ var Dataset = require('./dataset');
 var Type = require('./type');
 
 
-/*
-	Ensure string arguments are converted into normal form
+// create hash from a bunch of things
+var crypto = require('crypto');
+
+var hashOf = function(things){
+	var shasum = crypto.createHash('sha224');
+	things.forEach(function(x){
+		shasum.update(x);
+	});
+	return shasum.digest('base64');
+}
+
+
+/*	Ensure string arguments are converted into normal form
 
 	dataset ~> Dataset
 	type ~> Type
 */
-
 var normalize = function(f) {
 	return function(d, ty, id, doc)
 	{
@@ -33,11 +43,11 @@ var normalize = function(f) {
 			var target_id = dataset.normalizeId(t);
 
 			// if no id is specified, build one
-			var canonical_id = id || [
+			var canonical_id = id || hashOf([
 				source_id.replace('/', '.'),
 				type.name,
-				target_id.replace('/', '.')
-			].join('--');
+				target_id.replace('/', '.')				
+			]);
 
 			return f(dataset, type, dataset.normalizeId(canonical_id), source_id, target_id, doc);		
 		}
@@ -52,10 +62,12 @@ var normalize = function(f) {
 
 exports.ES_map = normalize(
 	function(dataset, type, id, _, _, doc) {
+		var body 
 		return {
 			index: dataset.root,
 			type: type.name,
-			id: id
+			id: id,
+			body: body
 		};
 	}
 );
@@ -69,7 +81,10 @@ exports.Neo_map = normalize(
 				'I_' + dataset.name, // subdataset owning this element
 				'__' // meaning, this is a managed node
 			],
-			id: id
+			params: doc,
+			id: id,
+			source_id: source_id,
+			target_id: target_id
 		};
 
 		// add edge info
