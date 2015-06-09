@@ -2,7 +2,7 @@
 name: add_node
 description: Add a node
 ---
-MERGE (n:_ {id: {id}})	
+MERGE (n:_ {id: {id}})  
 RETURN n
 
 ---
@@ -16,9 +16,8 @@ WHERE n.hgId = '123'
 
 ---
 name: add_edge
-description: Remove a node
+description: > 
+  Add an edge, optionally creating ghost source and targets.
 ---
-
-MATCH (n {id: {source}}), (m {id: {target}})
-CREATE (n)-[e:_]->(m)
-RETURN e
+MATCH ()-[e]-()
+RETURN DISTINCT e

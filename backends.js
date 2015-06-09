@@ -1,10 +1,8 @@
-var R = require('ramda');
 var ES = new require('elasticsearch');
-var Neo4J = new require('neo4j')
 exports.Elastic = function(opts){
 	var c = ES.Client(opts);
 
-	// index or remove from ES
+	// calling c.fn without 2nd argument yields a promise
 	var index = c.index.bind(c);
 	var remove = c.delete.bind(c);
 	
@@ -15,9 +13,15 @@ exports.Elastic = function(opts){
 	};
 }
 
+
+var Neo4J = new require('neo4j')
+var R = require('ramda');
+var Q = require('kew');
+var c = require('chalk');
+
 var queries = require('./queries');
 
-console.log(queries);//Object.keys(queries).map(require('chalk').bgYellow).join(' '));
+console.log(Object.keys(queries).map(c.bgBlue).join(' '));
 
 exports.Neo4J = function(opts) {
 	var db = new Neo4J.GraphDatabase(opts);
@@ -27,16 +31,19 @@ exports.Neo4J = function(opts) {
 		var node = op + '_node';
 		var edge = op + '_edge';
 		
-		return R.compose(
-			db.cypher,
-			function(thing) {
-				var q = thing.isNode ? node : edge;
-				console.log(require('chalk').bgBlue(q));
-				thing.query = queries[q].query_string;
-				console.log(thing)
-				return thing;
-			}
-		)
+		return function(thing) {
+			var q = thing.isNode ? node : edge;
+			console.log(c.bgBlue(q));
+		
+			thing.query = queries[q].query_string;
+			console.log(thing)
+			var d = Q.defer();
+			db.cypher(thing, function(err,resp){
+				if(err) d.reject(err);
+				else d.resolve(resp);
+			});
+			return d.promise;
+		};
 	}
 	
 	return {

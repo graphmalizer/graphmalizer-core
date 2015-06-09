@@ -10,7 +10,7 @@ var backends = require('./backends');
 
 var connections = {
 	Elastic: backends.Elastic({host: 'localhost:9200'}),
-	Neo4J: backends.Neo4J('http://neo4j@waag:localhost:7474/')
+	Neo4J: backends.Neo4J('http://neo4j:waag@localhost:7474')
 }
 
 var colours = {
@@ -48,7 +48,7 @@ function resource(op){
 			
 				// apply operation on all backends
 				var P = perform(op, m);
-				return ['Elastic', 'Neo4J'].map(P);
+				return Q.all(['Elastic', 'Neo4J'].map(P));
 			});
 	}
 }

@@ -83,13 +83,15 @@ exports.Neo_map = normalize(
 	function(dataset, type, id, source_id, target_id, doc) {
 
 		var base = {
-			labels: [
-				'T_' + type.name, // double function: ES type, Node Type
-				'I_' + dataset.name, // subdataset owning this element
-				'__' // meaning, this is a managed node
-			],
-			params: doc,
-			id: id,
+			params: {
+				labels: [
+					'T_' + type.name, // double function: ES type, Node Type
+					'I_' + dataset.name, // subdataset owning this element
+					'__' // meaning, this is a managed node
+				],
+				id: id,
+				doc: doc
+			},
 			isNode: true,
 			isEdge: false
 		};
@@ -98,8 +100,8 @@ exports.Neo_map = normalize(
 		if(type.isEdge) {
 			base.isNode = false;
 			base.isEdge = true;
-			base.source = source_id;
-			base.target = target_id;
+			base.params.source = source_id;
+			base.params.target = target_id;
 		}
 		
 		return base;
