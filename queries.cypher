@@ -18,18 +18,18 @@ ruleset:
 - | ( ) => (*)
 - | (*) => 500
 ---
-MERGE (n:_:VACANT {id: {id}})
+MERGE (n:_:_VACANT {id: {id}})
 ON CREATE
-SET n = {doc},
-	n.created = timestamp(),
-	n.id = {id}
+	SET n = {doc},
+		n.created = timestamp(),
+		n.id = {id}
 ON MATCH
-SET n = {doc},
-	n.created = timestamp(),
-	n.id = {id}
-REMOVE n:VACANT
+	SET n = {doc},
+	    n.accessTime = timestamp(),
+		n.counter = coalesce(n.counter, 0) + 1,
+		n.id = {id}
+	REMOVE n:_VACANT
 RETURN n
-
 
 
 ---
@@ -84,7 +84,7 @@ ON CREATE SET t :_:_VACANT
 WITH s,t
 MERGE (s)-[e:_ {id: {id}}]->(t)
 SET e = {doc},
-	e.id = id
+	e.id = {id}
 RETURN *
 
 # cute one
