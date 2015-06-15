@@ -8,7 +8,7 @@ var pp = require('prttty');
 var mach = require('mach');
 var app = mach.stack();
 
-app.use(mach.logger);
+// app.use(mach.logger);
 app.use(mach.params);
 
 // standardized answer
