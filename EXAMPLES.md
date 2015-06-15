@@ -14,7 +14,7 @@ Basic path form
 	/:dataset/:type/:id
 	/:dataset/:type
 
-Parameters `s`,`t`,`id`.
+Parameters `s`,`t`,`id` and `doc`.
 
 ### Basic overview
 
