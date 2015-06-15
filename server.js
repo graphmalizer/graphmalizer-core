@@ -16,9 +16,20 @@ var answer = function(mkPromise){
 	return function(conn){
 		console.log(c.magenta("REQ"), '=>', pp.render(conn.params));
 		
+		// get timestamp
+		var t0  = process.hrtime();
+
 		return mkPromise(conn)
 			.then(function(data){
-				return conn.json(200, {ok: true, data: data})
+				// find elapsed time in nanoseconds
+		  		var dt = process.hrtime(t0);
+				var ns = dt[0] * 1e9 + dt[1];
+				return conn.json(200, {
+					ok: true,
+					data: data,
+					duration_ms: (ns / 1e6),
+					duration_seconds: (ns / 1e9)
+				})
 			})
 			.fail(function(err) {
 				console.error(c.red('ERR'), c.grey('=>'), err);
