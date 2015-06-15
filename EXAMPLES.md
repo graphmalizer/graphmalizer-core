@@ -16,6 +16,32 @@ Basic path form
 
 Parameters `s`,`t`,`id` and `doc`.
 
+### Configuration
+
+The relation `LIES_IN` and the object `PIT` are predefined ([here](conf/typedefs.js)):
+
+	exports.PIT = {
+		node: {}
+	}
+
+	exports.LIES_IN = {
+		edge: {
+			source: 'from',
+			target: 'to'
+		}
+	}
+
+Here, `source` and `target` mean that this can be pulled out, so
+
+	http POST :5000/foo/LIES_IN source:=1 target:=2 doc:='{"a":123}'
+
+is equivalent to
+
+	http POST :5000/foo/LIES_IN doc:='{"from":1, "too":2, "a":123}'
+
+except for that `from` and `too` end up in the ES document and Node edge
+properties.
+
 ### Basic overview
 
 Create edge
