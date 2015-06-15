@@ -53,8 +53,28 @@ function resource(op){
 	}
 }
 
+
+var queries = R.mapObj(
+	
+	// set key value to .metadata.description.trim()
+	R.compose(
+		R.trim(),
+		function noEmptyString(s){return s || '-'},
+		R.prop('description'),
+		R.prop('metadata')
+	),
+	
+	// load queries
+	require('./queries')
+);
+
 module.exports = {
 	POST: resource('add'),
 	PUT: resource('update'),
-	DELETE: resource('remove')
+	DELETE: resource('remove'),
+	list_queries: function(coño) {
+		return Q.fcall(function(){
+			return queries
+		});
+	}
 }
