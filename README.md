@@ -20,3 +20,9 @@ create an edge, automatic id
 create a node
 
 	http POST :5000/foo/PIT/123 doc:='{"some":["prop",123]}'
+
+# running
+
+Development, fish shell
+
+	nodemon -w (echo *.js *.cypher) server.js

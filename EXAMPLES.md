@@ -2,84 +2,68 @@ Creates edge
 
 	http POST :5000/foo/LIES_IN/ source:=1 target:=2 doc:='{"a":123}'
 
+	http POST :5000/foo/PIT/999 doc:='{"hey":"there"}'
+
+	http GET :5000/query/get-node-by-id id="foo/999"
+
+Response:
+
 	HTTP/1.1 200 OK
 	Connection: keep-alive
 	Content-Type: application/json
-	Date: Tue, 09 Jun 2015 23:49:02 GMT
+	Date: Wed, 10 Jun 2015 14:35:38 GMT
 	Transfer-Encoding: chunked
 
 	{
 	    "data": [
-
-this is the ES response
-
 		{
-		    "_id": "34Pqb+CeRCVVA+81OnK6E56i/D6H+29264LD1w==",
-		    "_index": "foo",
-		    "_type": "LIES_IN",
-		    "_version": 26,
-		    "created": false
-		},
-
-this is the Neo4J response
-
-		[
-		    {
-			"e": {
-			    "_fromId": 0,
-			    "_id": 1,
-			    "_toId": 1,
-			    "properties": {},
-			    "type": "SAMEHGCONCEPT"
-			}
-		    },
-		    {
-			"e": {
-			    "_fromId": 1,
-			    "_id": 0,
-			    "_toId": 0,
-			    "properties": {},
-			    "type": "SAMEHGCONCEPT"
-			}
-		    },
-		    {
-			"e": {
-			    "_fromId": 4,
-			    "_id": 2,
-			    "_toId": 5,
-			    "properties": {},
-			    "type": "LIKES"
-			}
-		    },
-	maor hacking
-		    {
-			"e": {
-			    "_fromId": 8,
-			    "_id": 3,
-			    "_toId": 9,
-			    "properties": {},
-			    "type": "FOO"
-			}
-		    },
-		    {
-			"e": {
-			    "_fromId": 14,
-			    "_id": 7,
-			    "_toId": 15,
-			    "properties": {},
-			    "type": "_"
-			}
-		    },
-		    {
-			"e": {
-			    "_fromId": 16,
-			    "_id": 8,
-			    "_toId": 17,
-			    "properties": {},
-			    "type": "_I_"
+		    "n": {
+			"_id": 31,
+			"labels": [
+			    "_"
+			],
+			"properties": {
+			    "id": "foo/999"
 			}
 		    }
-		]
+		}
 	    ],
 	    "ok": true
 	}
+
+Notice the `_id`. We can now retrieve directly from Neo, without going through
+an index.
+
+	http GET :5000/query/get-node-by-neo-id id="31"
+
+Response:
+
+	http GET :5000/query/get-node-by-neo-id id:=31
+	HTTP/1.1 200 OK
+	Connection: keep-alive
+	Content-Type: application/json
+	Date: Wed, 10 Jun 2015 14:40:06 GMT
+	Transfer-Encoding: chunked
+
+	{
+	    "data": [
+		{
+		    "n": {
+			"_id": 31,
+			"labels": [
+			    "_"
+			],
+			"properties": {
+			    "id": "foo/999"
+			}
+		    }
+		}
+	    ],
+	    "ok": true
+	}
+
+Find adjecent edges
+
+	http GET :5000/query/get-adjecent id="foo/999"
+
+
