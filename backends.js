@@ -19,10 +19,9 @@ var R = require('ramda');
 var Q = require('kew');
 var c = require('chalk');
 var u = require('util');
+var pp = require('prttty');
 
 var queries = require('./queries');
-
-console.log(Object.keys(queries).map(c.bgBlue).join(' '));
 
 exports.Neo4J = function(opts) {
 	var db = new Neo4J.GraphDatabase(opts);
@@ -45,6 +44,8 @@ exports.Neo4J = function(opts) {
 		
 		// insert proper querystring
 		thing.query = queries[query_name].query_string;
+		
+		console.log(c.bgBlue(query_name), c.underline(thing.query) ,'~', pp.render(thing.params));
 		
 		// execute query
 		return cypher(thing);

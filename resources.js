@@ -39,6 +39,8 @@ function resource(op){
 		var args = conn.params;
 		console.log(pp.render(args));
 		return Q.fcall(function(){
+				console.log(c.underline(c.blue('ARGS')),'=>',pp.render(args));
+				
 				// perform normalization & mapping to backends
 				var m = mapping.map(
 					args.dataset, args.type, args.id,

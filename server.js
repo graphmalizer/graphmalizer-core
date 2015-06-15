@@ -14,6 +14,8 @@ app.use(mach.params);
 // standardized answer
 var answer = function(mkPromise){
 	return function(conn){
+		console.log(c.magenta("REQ"), '=>', pp.render(conn.params));
+		
 		return mkPromise(conn)
 			.then(function(data){
 				return conn.json(200, {ok: true, data: data})

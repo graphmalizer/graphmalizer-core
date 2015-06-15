@@ -1,6 +1,7 @@
 var u = require('util');
+var c = require('chalk');
 var R = require('ramda');
-var pp = require('prettyjson');
+var pp = require('prttty');
 
 var Dataset = require('./dataset');
 var Type = require('./type');
@@ -28,6 +29,9 @@ var normalize = function(f) {
 	{
 		var dataset = Dataset.cget(d);
 		var type = Type.cget(ty);
+
+		console.log(c.underline(c.magenta('DATASET')),'=>',pp.render(dataset));		
+		console.log(c.underline(c.gray('TYPE')),'=>',pp.render(type));
 
 		// nodes must have an id?
 		if(type.isNode){
