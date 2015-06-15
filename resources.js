@@ -72,6 +72,15 @@ module.exports = {
 	POST: resource('add'),
 	PUT: resource('update'),
 	DELETE: resource('remove'),
+	cypher: function(conn) {
+		var args = conn.params;
+		return Q.fcall(function(){
+			return connections.Neo4J.cypher({
+				params: args,
+				query_name: args.query_name
+			});
+		});
+	},
 	list_queries: function(coño) {
 		return Q.fcall(function(){
 			return queries

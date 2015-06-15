@@ -18,6 +18,7 @@ var Neo4J = new require('neo4j')
 var R = require('ramda');
 var Q = require('kew');
 var c = require('chalk');
+var u = require('util');
 
 var queries = require('./queries');
 
@@ -26,23 +27,43 @@ console.log(Object.keys(queries).map(c.bgBlue).join(' '));
 exports.Neo4J = function(opts) {
 	var db = new Neo4J.GraphDatabase(opts);
 
+	// execute cypher query and return a promise
+	var cypher = function(args)
+	{
+		var d = Q.defer();
+		db.cypher(args, function(err,resp){
+			if(err) d.reject(err);
+			else d.resolve(resp);
+		});
+		return d.promise;
+	}
+
+	var exec = function(thing, query_name) {
+		// check if query exists
+		if(!queries[query_name])
+			throw new Error(u.format("No such query, '%s'", query_name));
+		
+		// insert proper querystring
+		thing.query = queries[query_name].query_string;
+		
+		// execute query
+		return cypher(thing);
+	}
+
 	function query(op) {
 		// preconstruct query names add_node, ...  remove_edge
 		var node = op + '_node';
 		var edge = op + '_edge';
 		
 		return function(thing) {
-			var q = thing.isNode ? node : edge;
-			console.log(c.bgBlue(q));
-		
-			thing.query = queries[q].query_string;
-			console.log(thing)
-			var d = Q.defer();
-			db.cypher(thing, function(err,resp){
-				if(err) d.reject(err);
-				else d.resolve(resp);
-			});
-			return d.promise;
+			var query_name = thing.isNode ? node : edge;
+
+			// execute query
+			return exec(thing, query_name)
+				.fail(function(err){
+					if(err.neo4j.code === 'Neo.ClientError.Schema.ConstraintViolation')
+						throw new Error(u.format("Node with id '%s' already exists", thing.params.id))
+				});
 		};
 	}
 	
@@ -50,6 +71,9 @@ exports.Neo4J = function(opts) {
 		add: query('add'),
 		update: query('update'),
 		remove: query('remove'),
+		cypher: function(params) {
+			return exec(params, params.query_name);
+		}
 	}
-}
 
+}
