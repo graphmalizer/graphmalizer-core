@@ -62,8 +62,12 @@ exports.Neo4J = function(opts) {
 			// execute query
 			return exec(thing, query_name)
 				.fail(function(err){
+					// ah, we know what this is!
 					if(err.neo4j.code === 'Neo.ClientError.Schema.ConstraintViolation')
-						throw new Error(u.format("Node with id '%s' already exists", thing.params.id))
+						throw new Error(u.format("Node with id '%s' already exists", thing.params.id));
+
+					// ok, no idea, just fail again
+					throw err;
 				});
 		};
 	}
