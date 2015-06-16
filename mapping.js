@@ -33,9 +33,11 @@ var normalize = function(f) {
 		console.log(c.underline(c.magenta('DATASET')),'=>',pp.render(dataset));		
 		console.log(c.underline(c.gray('TYPE')),'=>',pp.render(type));
 
+		// both nodes/edge can have id
+		var i = id || (type.opts.id && doc && doc[type.opts.id]);
+
 		// nodes must have an id?
 		if(type.isNode){
-			var i = id || (type.opts.id && doc[type.opts.id]);
 
 			if(!i)
 				throw new Error(u.format('Must specify id when creating a node! (doc.%s)', type.opts.id));
@@ -60,7 +62,7 @@ var normalize = function(f) {
 			var target_id = dataset.normalizeId(t);
 
 			// if no id is specified, build one
-			var canonical_id = id || hashOf([
+			var canonical_id = i || hashOf([
 				source_id.replace('/', '.'),
 				type.name,
 				target_id.replace('/', '.')				
