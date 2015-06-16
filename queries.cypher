@@ -50,17 +50,24 @@ RETURN n
 
 ---
 name: remove_node
-description: Remove a node
+description: Remove a node or mark vacant.
 ruleset:
-- |  x  => 404
-- | (*) => x
+- |    x  => 404
 - | --( ) => 404
+- |   (*) => x
 - | --(*) => --( )
 ---
-
 MATCH (n:_ {id: {id}})
+WHERE NOT n:_VACANT
+	SET n:_VACANT
+	SET n={}
+	SET n.id = {id}
+UNION ALL
+OPTIONAL MATCH (n:_:_VACANT {id: {id}})
+WHERE length( (n)--() ) = 0
 DELETE n
-RETURN true
+RETURN n
+
 
 ---
 name: add_edge
@@ -77,6 +84,7 @@ ruleset:
 - | ( ) (*)  => ( )-->(*)
 - | (*) (*)  => (*)-->(*)
 ---
+
 MERGE (s:_ {id: {source}})
 ON CREATE SET s :_:_VACANT
 MERGE (t:_ {id: {target}})
@@ -87,9 +95,45 @@ SET e = {doc},
 	e.id = {id}
 RETURN *
 
-# cute one
-# MATCH (n) MATCH (m) MERGE (n)-[e:_]->(m) RETURN *
-# creates labeled edges between all pairs nodes
+---
+name: remove_edge
+description: > 
+  Remove edge
+ruleset:
+- |    x     x     =>  404
+- |   ( )    x     =>  404
+- |   (*)    x     =>  404
+- |    x    ( )    =>  404
+- |    x    (*)    =>  404
+- |   ( )-->( )    =>     x     x
+- |   (*)-->( )    =>    (*)    x
+- |   ( )-->(*)    =>     x    (*)
+- |   (*)-->(*)    =>    (*)   (*)
+- | --( )-->( )--  =>  --( )   ( )--
+- | --(*)-->( )--  =>  --(*)   ( )--
+- | --( )-->(*)--  =>  --( )   (*)--
+- | --(*)-->(*)--  =>  --(*)   (*)--
+- |   ( )-->( )--  =>   x    ( )--
+- |   (*)-->( )--  =>  (*)   ( )--
+- |   ( )-->(*)--  =>   x    (*)--
+- |   (*)-->(*)--  =>  (*)   (*)--
+- | --( )-->( )    =>  --( )    x
+- | --(*)-->( )    =>  --(*)    x
+- | --( )-->(*)    =>  --( )   (*)
+- | --(*)-->(*)    =>  --(*)   (*)
+---
+
+# find the edge by id
+MATCH (s)-[e:_ {id: {id}}]-(t)
+DELETE e
+WITH s.id AS source, t.id AS target
+
+# remove vacant degree zero source and/or target node.
+OPTIONAL MATCH (n:_:_VACANT)
+WHERE n.id IN [target, source] AND length( (n)-[]-() ) = 0
+DELETE n
+
+RETURN true
 
 ---
 name: get-node-by-neo-id
@@ -106,11 +150,32 @@ description: >
 START e=edge({id}) MATCH ()-[e:_]->() RETURN e
 
 ---
+name: get-inhabited-node
+description: >
+  Get inhabited node
+---
+MATCH (n:_ {id: {id}})
+WHERE NOT n:_VACANT
+RETURN n
+
+# cute one
+# MATCH (n) MATCH (m) MERGE (n)-[e:_]->(m) RETURN *
+# creates labeled edges between all pairs nodes
+
+---
 name: get-node
 description: >
   Get managed node.
 ---
 MATCH (n:_ {id: {id}}) RETURN n
+
+---
+name: get-node-labels
+description: >
+  Get labels for node.
+---
+MATCH (n:_ {id: {id}})
+RETURN labels(n)
 
 ---
 name: get-edge
@@ -156,19 +221,22 @@ MATCH (n:_) DELETE n RETURN *
 name: get-managed-set
 description: Return all managed nodes and edges
 ---
-MATCH (n:_),()-[e:_]-() RETURN DISTINCT *
+MATCH (n:_),()-[e:_]-()
+RETURN DISTINCT *
 
 ---
 name: get-managed-nodes
 description: Return all managed nodes and edges
 ---
-MATCH (n:_) RETURN DISTINCT *
+MATCH (n:_)
+RETURN DISTINCT *
 
 ---
 name: get-managed-edges
 description: Return all managed nodes and edges
 ---
-MATCH ()-[e:_]-() RETURN DISTINCT e
+MATCH ()-[e:_]-()
+RETURN DISTINCT e
 
 ---
 name: get-adjecent
@@ -177,10 +245,25 @@ description: Return all managed nodes and edges
 MATCH (n:_ {id: {id}})-[e:_]-()
 RETURN DISTINCT e
 
+
+---
+name: klont
+description: expand under all relations
+---
+
+MATCH (n:_ {id: {id}})
+WHERE NOT n:_VACANT
+RETURN n AS m
+
+UNION
+
+MATCH (n)-[:_*]->(m)
+RETURN DISTINCT M
+
+
 ---
 name: clean
 description: Return all managed nodes and edges
 ---
-MATCH (n:_),()-[e:_]-()
-DELETE n, e
-RETURN true
+MATCH (n:_), ()-[e:_]-()
+DELETE e, n
