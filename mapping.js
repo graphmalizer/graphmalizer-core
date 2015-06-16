@@ -47,20 +47,24 @@ var normalize = function(f) {
 
 		// we are dealing with an edge
 		if(type.isEdge){
-			// if source/target are not specified as parameters,
-			// look them up in the document
-			var s = ps;// || doc[type.opts.source];
-			var t = pt;// || doc[type.opts.target];
+			
+			// TODO oh oh,.. no this is wrong. Sometimes need s/t, but not for cypher queries. need to restructure this
+			if(!i){		
+				// if source/target are not specified as parameters,
+				// look them up in the document
+				var s = ps || (type.opts.source && doc && doc[type.opts.source]);
+				var t = pt || (type.opts.target && doc && doc[type.opts.target]);
 		
-			if(!s)
-				throw new Error(u.format("Missing source field '%s'", type.opts.source));
+				if(!s)
+					throw new Error(u.format("Missing source field '%s'", type.opts.source));
 		
-			if(!t)
-				throw new Error(u.format("Missing target field '%s'", type.opts.target));
+				if(!t)
+					throw new Error(u.format("Missing target field '%s'", type.opts.target));
 		
-			var source_id = dataset.normalizeId(s);
-			var target_id = dataset.normalizeId(t);
-
+				var source_id = dataset.normalizeId(s);
+				var target_id = dataset.normalizeId(t);
+			
+			}
 			// if no id is specified, build one
 			var canonical_id = i || hashOf([
 				source_id.replace('/', '.'),
