@@ -13,9 +13,13 @@ if(!queueName) {
 
 var client = redis.createClient();
 
-function die(why){
-	console.log(why);
-	process.exit(-1);
+function die(err, why){
+	if(err)
+	{
+		console.log(why);
+		console.error(err);
+		process.exit(-1);
+	}
 }
 
 function put_thing_in_thing()
