@@ -1,3 +1,6 @@
+
+############################## core queries ###############################
+
 #
 #  Below are two sets of three queries,
 #
@@ -8,6 +11,8 @@
 #
 #    --( ) vacant nodes only appear with degree > 0
 #
+
+#################################### nodes #################################
 
 ---
 name: add_node
@@ -68,6 +73,7 @@ WHERE length( (n)--() ) = 0
 DELETE n
 RETURN n
 
+#################################### edges #################################
 
 ---
 name: add_edge
@@ -95,6 +101,32 @@ SET e = {doc},
 	e.created = timestamp(),
 	e.id = {id}
 RETURN *
+
+---
+name: update_edge
+description: > 
+  Remove edge
+ruleset:
+- |    x     x     =>  404
+- |   ( )    x     =>  404
+- |   (*)    x     =>  404
+- |    x    ( )    =>  404
+- |    x    (*)    =>  404
+- |   ( )-->( )    =>    ( )-->( )
+- |   (*)-->( )    =>    (*)-->( )
+- |   ( )-->(*)    =>    ( )-->(*)
+- |   (*)-->(*)    =>    (*)-->(*)
+
+---
+
+# find the edge by id
+MATCH (s)-[e:_ {id: {id}}]-(t)
+WITH e, coalesce(e.counter, 0) + 1 AS c
+SET e = {doc},
+    e.accessTime = timestamp(),
+	e.counter = c,
+	e.id = {id}
+RETURN e
 
 ---
 name: remove_edge
@@ -135,6 +167,11 @@ WHERE n.id IN [target, source] AND length( (n)-[]-() ) = 0
 DELETE n
 
 RETURN true
+
+
+###########################################################################
+
+
 
 ---
 name: get-node-by-neo-id
@@ -252,19 +289,24 @@ name: klont
 description: expand under all relations
 ---
 
-MATCH (n:_ {id: {id}})
-WHERE NOT n:_VACANT
-RETURN n AS m
-
+MATCH (x:_ {id: {id}})
+	WHERE NOT x:_VACANT
+	RETURN x AS n
 UNION
-
-MATCH (n)-[:_*]->(m)
-RETURN DISTINCT M
-
+	MATCH (x:_ {id: {id}})
+	MATCH (x)-[:_*]->(y)
+	RETURN DISTINCT y AS n
 
 ---
 name: clean
 description: Return all managed nodes and edges
 ---
-MATCH (n:_), ()-[e:_]-()
-DELETE e, n
+# MATCH (n:_), ()-[e:_]-()
+# DELETE e, n
+OPTIONAL MATCH ()-[e:_]-()
+	DELETE e
+	RETURN DISTINCT true AS success
+UNION
+OPTIONAL MATCH (n:_)
+	DELETE n
+	RETURN DISTINCT true AS success
