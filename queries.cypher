@@ -92,6 +92,7 @@ ON CREATE SET t :_:_VACANT
 WITH s,t
 MERGE (s)-[e:_ {id: {id}}]->(t)
 SET e = {doc},
+	e.created = timestamp(),
 	e.id = {id}
 RETURN *
 
