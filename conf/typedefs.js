@@ -16,3 +16,10 @@ exports.LIES_IN = {
 		target: 'to'
 	}
 }
+
+exports.SAME_AS = {
+	edge: {
+		source: 'from',
+		target: 'to'
+	}
+}
