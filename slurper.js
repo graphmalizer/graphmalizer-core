@@ -25,7 +25,7 @@ function die(err, why){
 
 function computeType(data){
 	var kind = data.type;
-	var t = data.type || data.label;
+	var t = data.data.type;
 
 	if(kind === 'pit')
 		return 'PIT';
@@ -36,7 +36,7 @@ function computeType(data){
 	if(t === 'hg:sameHgConcept')
 		return 'SAME_AS';
 
-	die(null, "don't know this");
+	die(null, "don't know the type " + t);
 }
 
 function toGraphmalizer(data){
@@ -55,7 +55,7 @@ function toGraphmalizer(data){
 		dataset: data.sourceid.replace('.','-'),
 		type: computeType(data),
 		method: method,
-		id: data.data.id || undefined,
+		id: data.data.id || data.data.uri || undefined,
 		document: data.data
 	}
 }
