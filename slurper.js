@@ -4,10 +4,11 @@ var c = require('chalk');
 var redis = require('redis');
 var pp = require('prttty');
 var argv = require('minimist')(process.argv.slice(2));
+var request = require('request');
 
 var queueName = argv.q || argv.queue;
 if(!queueName) {
-	console.log("usage: node ./slurper.js --queue 'name'");
+	console.log("usage: node ./slurper.js --queue 'name' --host 'hostname'");
 	process.exit(-1);
 }
 
@@ -22,79 +23,74 @@ function die(err, why){
 	}
 }
 
-function put_thing_in_thing()
+function computeType(data){
+	var kind = data.type;
+	var t = data.type || data.label;
+
+	if(kind === 'pit')
+		return 'PIT';
+
+	if(t === 'hg:liesIn')
+		return 'LIES_IN';
+
+	if(t === 'hg:sameHgConcept')
+		return 'SAME_AS';
+
+	die(null, "don't know this");
+}
+
+function toGraphmalizer(data){
+
+	// convert objects to JSONified strings
+	Object.keys(data.data).forEach(function(k){
+		var v = data.data[k];
+		if(typeof(v) === 'object')
+			data.data[k] = JSON.stringify(v);
+	});
+	
+	var method = {add: 'post', delete: 'delete',update: 'put'}[data.action];
+
+	// should change server.js to accept '.' in datasetname
+	return {
+		dataset: data.sourceid.replace('.','-'),
+		type: computeType(data),
+		method: method,
+		id: data.data.id || undefined,
+		document: data.data
+	}
+}
+
+function parseJSON(s){
+	try {
+		return JSON.parse(s)
+	}
+	catch(e) {
+		return undefined
+	}
+}
+
+function runQueue()
 {
 	client.blpop(queueName, 0, function(err,data){
-
-		if(err)
-		{
-			console.error(err);
-			process.exit(-1);
-		}
-
-
 		var d = JSON.parse(data[1]);
+		var rq = toGraphmalizer(d);	
+		
+		var uri = u.format('http://localhost:5000/%s/%s', rq.dataset, rq.type);
+		if (rq.id)
+			uri += '/' + rq.id;
 
-		// select type
-		var type = what_thing_is_this(d);
-
-		console.log(type[0](type[1]), '=>', pp.render(d));
-
-		do_thing_to_it(type[1], d);
-
-
+		console.log(c.bgWhite('REQ'), '=>', uri, pp.render(rq));
+		
+		request[rq.method](uri, (rq.document && {form: {doc: rq.document}}) || {},
+			function(err,resp,body){
+				die(err, "error while posting!")
+				var j = parseJSON(body)
+				var f = (j && j.ok) ? c.bgGreen : c.bgRed;
+				console.log(f('RES', '<=', body));
+				// loop
+				process.nextTick(runQueue);
+			});
 	});
 }
 
-put_thing_in_thing();
-
-function what_thing_is_this(data){
-
-	var l = data.label;
-	var t = data.type;
-
-	if(l === "hg:liesIn")
-		return [c.bgBlue, 'LIES_IN'];
-
-	if(l === "hg:sameHgConcept")
-		return [c.bgYellow, 'SAME_AS'];
-
-	if (/^hg:/.test(t))
-		return [c.bgCyan, 'PIT'];
-
-	return [c.bgRed, 'UNKNOWN'];
-}
-
-
-
-function do_thing_to_it(type, data){
-
-	var dataset = 'test';
-	var uri = u.format('/%s/%s', dataset, type)
-	if (data.id)
-		uri += '/' + data.id;
-
-	var request = require('request');
-	var doc = data.data || data || {};
-
-	if(data.name)
-		doc.name = data.name;
-
-	if(data.type)
-		doc.hgType = data.type;
-
-	if(data.geometry)
-		delete data.geometry;
-		// doc.geometry = docata.geometry;
-
-	// var doc = {he:123, werkt: { niet: [1,2,3] }};
-
-	console.log(c.bgWhite('REQ'), '=>', uri, pp.render(doc));
-	request.post('http://localhost:5000' + uri, {form: {doc: doc}}, function(err,resp,body){
-		var f = (body && JSON.parse(body).ok) ? c.bgGreen : c.bgRed;
-		console.log(f('RES', '<=', body));
-		// loop
-		process.nextTick(put_thing_in_thing);
-	});
-
-}
+runQueue();
