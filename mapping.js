@@ -72,7 +72,7 @@ var normalize = function(f) {
 				target_id.replace('/', '.')				
 			]);
 
-			return f(dataset, type, dataset.normalizeId(canonical_id), source_id, target_id, doc);		
+			return f(dataset, type, canonical_id, source_id, target_id, doc);
 		}
 	} 
 }
