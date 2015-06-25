@@ -46,7 +46,7 @@ function normalize(id, uri, dataset){
 		return 'urn:' + dataset + ':' + id;
 
 	try {
-		return normalizer.URLtoURN(data.data.uri, data.sourceid);
+		return normalizer.URLtoURN(uri, dataset);
 	} catch(e) {
 		return uri;
 	}
