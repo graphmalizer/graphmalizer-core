@@ -23,6 +23,16 @@ var pp = require('prttty');
 
 var queries = require('./queries');
 
+function stringifyObjects(d){
+	// convert objects to JSONified strings
+	Object.keys(d).forEach(function(k){
+		var v = d[k];
+		if(typeof(v) === 'object')
+			d[k] = JSON.stringify(v);
+	});
+}
+
+
 exports.Neo4J = function(opts) {
 	var db = new Neo4J.GraphDatabase(opts);
 
@@ -42,14 +52,8 @@ exports.Neo4J = function(opts) {
 		if(!queries[query_name])
 			throw new Error(u.format("No such query, '%s'", query_name));
 		
-		// convert objects to JSONified strings
-		Object.keys(thing.params).forEach(function(k){
-			var v = thing.params[k];
-			if(typeof(v) === 'object')
-				thing.params[k] = JSON.stringify(v);
-		});
-		
-		
+		stringifyObjects(thing.params.doc);
+
 		// insert proper querystring
 		thing.query = queries[query_name].query_string;
 		
