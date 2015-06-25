@@ -48,6 +48,12 @@ function normalize(id, uri, dataset){
 	try {
 		return normalizer.URLtoURN(uri, dataset);
 	} catch(e) {
+		
+		// if uri like 'bag/123'
+		// then return urn: ...
+		if(/^[\w-_]+\/.*$/.test(uri))
+			return 'urn:' + dataset + ':' + uri;
+
 		return uri;
 	}
 }
@@ -69,8 +75,8 @@ function toGraphmalizer(data){
 		type: computeType(data),
 		method: method,
 		id: normalize(data.data.id, data.data.uri, data.sourceid),
-		source: (data.data.from && normalize(data.data.from)) || undefined,
-		target: (data.data.to && normalize(data.data.to)) || undefined,
+		source: (data.data.from && normalize(undefined, data.data.from, data.sourceid)) || undefined,
+		target: (data.data.to && normalize(undefined, data.data.to, data.sourceid)) || undefined,
 		document: data.data
 	}
 }
