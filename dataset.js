@@ -7,13 +7,4 @@ var Dataset = function (s){
 	this.root = R.head(this.path);
 };
 
-Dataset.prototype.normalizeId = function(id){
-	// do nothing if we find a `/`
-	if(/\//.test(id))
-		return id;
-	
-	// expand
-	return this.root + '/' + id;
-}
-
 module.exports = Cached(Dataset);

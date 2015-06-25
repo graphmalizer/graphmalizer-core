@@ -42,7 +42,7 @@ var normalize = function(f) {
 			if(!i)
 				throw new Error(u.format('Must specify id when creating a node! (doc.%s)', type.opts.id));
 		
-			return f(dataset, type, dataset.normalizeId(id), undefined, undefined, doc);		
+			return f(dataset, type, id, undefined, undefined, doc);
 		}
 
 		// we are dealing with an edge
