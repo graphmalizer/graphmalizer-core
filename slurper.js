@@ -51,7 +51,7 @@ function normalize(id, uri, dataset){
 		
 		// if uri like 'bag/123'
 		// then return urn: ...
-		if(/^[\w-_]+\/.*$/.test(uri))
+		if(/^[\w\d-_]+\/.*$/.test(uri) || /^[\w\d-_]+$/.test(uri))
 			return 'urn:' + dataset + ':' + uri;
 
 		return uri;
