@@ -25,6 +25,9 @@ var queries = require('./queries');
 
 function stringifyObjects(d){
 	// convert objects to JSONified strings
+	if(!typeof(d) === 'object')
+		return;
+
 	Object.keys(d).forEach(function(k){
 		var v = d[k];
 		if(typeof(v) === 'object')
