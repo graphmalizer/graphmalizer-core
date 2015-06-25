@@ -42,6 +42,14 @@ exports.Neo4J = function(opts) {
 		if(!queries[query_name])
 			throw new Error(u.format("No such query, '%s'", query_name));
 		
+		// convert objects to JSONified strings
+		Object.keys(thing.params).forEach(function(k){
+			var v = thing.params[k];
+			if(typeof(v) === 'object')
+				thing.params[k] = JSON.stringify(v);
+		});
+		
+		
 		// insert proper querystring
 		thing.query = queries[query_name].query_string;
 		

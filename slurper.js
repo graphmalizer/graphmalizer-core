@@ -60,13 +60,6 @@ function normalize(id, uri, dataset){
 
 function toGraphmalizer(data){
 
-	// convert objects to JSONified strings
-	Object.keys(data.data).forEach(function(k){
-		var v = data.data[k];
-		if(typeof(v) === 'object')
-			data.data[k] = JSON.stringify(v);
-	});
-	
 	var method = {add: 'post', delete: 'delete',update: 'put'}[data.action];
 	
 	// should change server.js to accept '.' in datasetname
