@@ -5,7 +5,8 @@ var redis = require('redis');
 var pp = require('prttty');
 var argv = require('minimist')(process.argv.slice(2));
 var request = require('request');
-var normalizer = require('histograph-uri-normalizer');
+
+var normalize = require('./identifiers');
 
 var queueName = argv.q || argv.queue || 'histograph-queue';
 if(!queueName) {
@@ -40,37 +41,36 @@ function computeType(data){
 	die(null, "don't know the type " + t);
 }
 
-
-function normalize(id, uri, dataset){
-	if(id)
-		return 'urn:' + dataset + ':' + id;
-
-	try {
-		return normalizer.URLtoURN(uri, dataset);
-	} catch(e) {
-		
-		// if uri like 'bag/123'
-		// then return urn: ...
-		if(/^[\w\d-_]+\/.*$/.test(uri) || /^[\w\d-_]+$/.test(uri))
-			return 'urn:' + dataset + ':' + uri;
-
-		return uri;
-	}
-}
-
 function toGraphmalizer(data){
 
-	var method = {add: 'post', delete: 'delete',update: 'put'}[data.action];
+	// // convert objects to JSONified strings
+	// Object.keys(data.data).forEach(function(k){
+	// 	var v = data.data[k];
+	// 	if(typeof(v) === 'object')
+	// 		data.data[k] = JSON.stringify(v);
+	// });
 	
+	var method = {add: 'post', delete: 'delete',update: 'put'}[data.action];
+
+	function norm(x){
+		if(x)
+			return normalize(x, data.sourceid);
+
+		return undefined;
+	}
+
+	var d = data.data;
+	var i = d.id || d.uri; // nodes are identified with id's or URI's, we don't care.
+
 	// should change server.js to accept '.' in datasetname
 	return {
 		dataset: data.sourceid.replace('.','-'),
 		type: computeType(data),
 		method: method,
-		id: normalize(data.data.id, data.data.uri, data.sourceid),
-		source: (data.data.from && normalize(undefined, data.data.from, data.sourceid)) || undefined,
-		target: (data.data.to && normalize(undefined, data.data.to, data.sourceid)) || undefined,
-		document: data.data
+		id: norm(i),
+		source: norm(d.from),
+		target: norm(d.to),
+		document: d
 	}
 }
 
