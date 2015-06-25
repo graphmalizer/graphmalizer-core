@@ -67,7 +67,7 @@ function toGraphmalizer(data){
 		dataset: data.sourceid.replace('.','-'),
 		type: computeType(data),
 		method: method,
-		id: uri,
+		id: id,
 		document: data.data
 	}
 }
