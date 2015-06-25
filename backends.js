@@ -31,7 +31,6 @@ function stringifyObjects(d){
 				if(typeof(v) === 'object')
 					d[k] = JSON.stringify(v);
 			});
-		}
 }
 
 
