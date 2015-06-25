@@ -54,11 +54,11 @@ Create node with id `foo/999`.
 
 Look it up in Neo using `id` index.
 
-	http GET :5000/query/get-node-by-id id="foo/999"
+	http GET :5000//query/get-node-by-id id="foo/999"
 
 Find adjecent edges
 
-	http GET :5000/query/get-adjecent id="foo/999"
+	http GET :5000//query/get-adjecent id="foo/999"
 
 ### Example
 

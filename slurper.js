@@ -5,8 +5,9 @@ var redis = require('redis');
 var pp = require('prttty');
 var argv = require('minimist')(process.argv.slice(2));
 var request = require('request');
+var normalizer = require('histograph-uri-normalizer');
 
-var queueName = argv.q || argv.queue;
+var queueName = argv.q || argv.queue || 'histograph-queue';
 if(!queueName) {
 	console.log("usage: node ./slurper.js --queue 'name' --host 'hostname'");
 	process.exit(-1);
@@ -49,13 +50,24 @@ function toGraphmalizer(data){
 	});
 	
 	var method = {add: 'post', delete: 'delete',update: 'put'}[data.action];
+	
+	var dataset = data.sourceid;
+	var id = 'urn:' + dataset + ':' + data.data.id;
+
+	if (data.data.uri) {
+		try {
+			id = normalizer.URLtoURN(data.data.uri, data.sourceid);
+		} catch(e) {
+			id = data.data.uri;
+		}
+	}
 
 	// should change server.js to accept '.' in datasetname
 	return {
 		dataset: data.sourceid.replace('.','-'),
 		type: computeType(data),
 		method: method,
-		id: data.data.id || data.data.uri || undefined,
+		id: uri,
 		document: data.data
 	}
 }
