@@ -61,8 +61,8 @@ var normalize = function(f) {
 				if(!t)
 					throw new Error(u.format("Missing target field '%s'", type.opts.target));
 		
-				var source_id = dataset.normalizeId(s);
-				var target_id = dataset.normalizeId(t);
+				var source_id = s;
+				var target_id = t;
 			
 			}
 			// if no id is specified, build one
