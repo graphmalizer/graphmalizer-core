@@ -40,6 +40,18 @@ function computeType(data){
 	die(null, "don't know the type " + t);
 }
 
+
+function normalize(id, uri, dataset){
+	if(id)
+		return 'urn:' + dataset + ':' + id;
+
+	try {
+		return normalizer.URLtoURN(data.data.uri, data.sourceid);
+	} catch(e) {
+		return uri;
+	}
+}
+
 function toGraphmalizer(data){
 
 	// convert objects to JSONified strings
@@ -51,23 +63,14 @@ function toGraphmalizer(data){
 	
 	var method = {add: 'post', delete: 'delete',update: 'put'}[data.action];
 	
-	var dataset = data.sourceid;
-	var id = 'urn:' + dataset + ':' + data.data.id;
-
-	if (data.data.uri) {
-		try {
-			id = normalizer.URLtoURN(data.data.uri, data.sourceid);
-		} catch(e) {
-			id = data.data.uri;
-		}
-	}
-
 	// should change server.js to accept '.' in datasetname
 	return {
 		dataset: data.sourceid.replace('.','-'),
 		type: computeType(data),
 		method: method,
-		id: id,
+		id: normalize(data.data.id, data.data.uri, data.sourceid),
+		source: (data.data.from && normalize(data.data.from)) || undefined,
+		target: (data.data.to && normalize(data.data.to)) || undefined,
 		document: data.data
 	}
 }
