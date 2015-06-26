@@ -3,6 +3,8 @@ some sort of graphmalizer, take sets of documents into elasticsearch and neo.
 
 see [ABOUT](ABOUT.md)
 
+![much looks](da-lookz.png)
+
 define your types here [typedefs](conf/typedefs.js)
 
 	PIT: { node: {} },
