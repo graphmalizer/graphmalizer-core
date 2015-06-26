@@ -58,13 +58,13 @@ app.post('/:dataset/:type/', U.POST);
 app.post('/:dataset/:type', U.POST); 
 
 // new doc, specify id
-app.post('/:dataset/:type/*:id', U.POST);
+app.post('/:dataset/:type/*', U.POST);
 
 // update document
-app.put('/:dataset/:type/*:id', U.PUT);
+app.put('/:dataset/:type/*', U.PUT);
 
 // delete document
-app.delete('/:dataset/:type/*:id', U.DELETE);
+app.delete('/:dataset/:type/*', U.DELETE);
 
 
 mach.serve(app);

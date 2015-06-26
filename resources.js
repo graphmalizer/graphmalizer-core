@@ -43,7 +43,7 @@ function resource(op){
 				
 				// perform normalization & mapping to backends
 				var m = mapping.map(
-					args.dataset, args.type, args.id,
+					args.dataset, args.type, args.splat,
 					args.source || args.s, args.target || args.t,
 					args.doc
 				);
