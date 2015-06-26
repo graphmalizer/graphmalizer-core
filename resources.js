@@ -69,7 +69,7 @@ module.exports = {
 	cypher: function(conn) {
 		var args = conn.params;
 		return Q.fcall(function(){
-			return connections.Neo4J.cypher({
+			return connection.cypher({
 				params: args,
 				query_name: args.query_name
 			});
