@@ -5,7 +5,7 @@ see [ABOUT](ABOUT.md)
 
 ![much looks](da-lookz.png)
 
-define your types here [typedefs](config.json)
+define your types here [`config.json`](config.json)
 
 ```js
 {
@@ -28,6 +28,9 @@ define your types here [typedefs](config.json)
 	}
 }
 ```
+
+(or pass file path as `--config` or as `GRAPHMALIZER_CONFIG` environment variable)
+
 
 then you can test the server using HTTPie
 
