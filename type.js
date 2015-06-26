@@ -1,6 +1,6 @@
 var Cached = require('./cache');
 
-var TYPES = require('./conf/typedefs');
+var TYPES = require('./config').types;
 
 var Type = function (s){
 	this.name = s || '*';

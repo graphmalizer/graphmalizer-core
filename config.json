@@ -1,0 +1,19 @@
+{
+	"types": {
+		"PIT": {
+			"node": {}
+		},
+		"LIES_IN": {
+			"edge": {}
+		},
+		"SAME_AS": {
+			"edge": {}
+		},
+		"USED_FOR": {
+			"edge": {}
+		},
+		"ORIGINATED_FROM": {
+			"edge": {}
+		}
+	}
+}
