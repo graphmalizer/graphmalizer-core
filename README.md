@@ -5,10 +5,29 @@ see [ABOUT](ABOUT.md)
 
 ![much looks](da-lookz.png)
 
-define your types here [typedefs](conf/typedefs.js)
+define your types here [typedefs](config.json)
 
-	PIT: { node: {} },
-	LIES_IN: { edge: { source: 'from', target: 'to' } }
+```js
+{
+	"types": {
+		"PIT": {
+			"node": {}
+		},
+		"LIES_IN": {
+			"edge": {}
+		},
+		"SAME_AS": {
+			"edge": {}
+		},
+		"USED_FOR": {
+			"edge": {}
+		},
+		"ORIGINATED_FROM": {
+			"edge": {}
+		}
+	}
+}
+```
 
 then you can test the server using HTTPie
 
