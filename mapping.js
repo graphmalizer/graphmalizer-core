@@ -77,19 +77,7 @@ var normalize = function(f) {
 	} 
 }
 
-exports.ES_map = normalize(
-	function(dataset, type, id, _, _, doc) {
-		var body 
-		return {
-			index: dataset.root,
-			type: type.name,
-			id: id,
-			body: doc
-		};
-	}
-);
-
-exports.Neo_map = normalize(
+module.exports = normalize(
 	function(dataset, type, id, source_id, target_id, doc) {
 
 		var base = {
@@ -117,10 +105,3 @@ exports.Neo_map = normalize(
 		return base;
 	}	
 );
-
-exports.map = function(dataset, type, id, s, t, doc){
-	return {
-		Elastic: exports.ES_map(dataset, type, id, s, t, doc),
-		Neo4J: exports.Neo_map(dataset, type, id, s, t, doc)
-	}
-}

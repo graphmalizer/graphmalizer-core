@@ -5,13 +5,8 @@ var u = require('util');
 var pp = require('prttty');
 
 var mapping = require('./mapping')
-
 var backends = require('./backends');
-
-var connections = {
-	Elastic: backends.Elastic({host: 'localhost:9200'}),
-	Neo4J: backends.Neo4J('http://neo4j:waag@localhost:7474')
-}
+var connection = backends('http://neo4j:waag@localhost:7474');
 
 var colours = {
 	operation: {
@@ -26,13 +21,11 @@ var colours = {
 }
 
 // operate on backend
-perform = R.curry(function(operation, mapping, backend) {
-	// creates a promise
-	var be = colours.backend[backend](u.format('[%s]',backend))
+perform =function(operation, mapping) {
 	var op = colours.operation[operation](u.format(' %s ',operation));
-	console.log(be, c.gray('=>'), op, ' ~ ', pp.render(mapping[backend]))
-	return connections[backend][operation](mapping[backend]);
-});
+	console.log(c.gray('NEO =>'), op, ' ~ ', pp.render(mapping))
+	return connection[operation](mapping);
+};
 
 function resource(op){
 	return function(conn){
@@ -42,15 +35,14 @@ function resource(op){
 				console.log(c.underline(c.blue('ARGS')),'=>',pp.render(args));
 				
 				// perform normalization & mapping to backends
-				var m = mapping.map(
+				var m = mapping(
 					args.dataset, args.type, args.splat,
 					args.source || args.s, args.target || args.t,
 					args.doc
 				);
 			
 				// apply operation on all backends
-				var P = perform(op, m);
-				return Q.all(['Elastic', 'Neo4J'].map(P));
+				return perform(op, m);
 			});
 	}
 }

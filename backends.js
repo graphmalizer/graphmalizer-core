@@ -1,19 +1,3 @@
-var ES = new require('elasticsearch');
-exports.Elastic = function(opts){
-	var c = ES.Client(opts);
-
-	// calling c.fn without 2nd argument yields a promise
-	var index = c.index.bind(c);
-	var remove = c.delete.bind(c);
-	
-	return {
-		add: index,
-		update: index,
-		remove: remove
-	};
-}
-
-
 var Neo4J = new require('neo4j')
 var R = require('ramda');
 var Q = require('kew');
@@ -33,8 +17,7 @@ function stringifyObjects(d){
 			});
 }
 
-
-exports.Neo4J = function(opts) {
+module.exports = function(opts) {
 	var db = new Neo4J.GraphDatabase(opts);
 
 	// execute cypher query and return a promise
@@ -70,6 +53,13 @@ exports.Neo4J = function(opts) {
 		var edge = op + '_edge';
 		
 		return function(thing) {
+			// query name = `[OPERATION]_[NODE|EDGE]`
+			// thing.params.labels = thing.params.labels
+			// 	.map(function(l){
+			// 		return ':' + l;
+			// 	})
+			// 	.join('');
+
 			var query_name = thing.isNode ? node : edge;
 
 			// execute query
