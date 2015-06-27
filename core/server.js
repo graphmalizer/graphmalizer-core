@@ -10,8 +10,8 @@ var app = mach.stack();
 app.use(mach.params);
 
 // standardized answer
-var answer = function(mkPromise){
-	return function(conn){
+var mkStandardAnswer = function(mkPromise){
+	return function(conn) {
 		log.REQ(conn.params);
 		
 		// get timestamp
@@ -43,26 +43,36 @@ app.get('/', function (conn) {
 	return conn.json(200, {ok: true});
 });
 
-// load resources, generate standardized answer
-var U = R.mapObj(answer, require('./resources'));
+var r = require('./resources');
 
-// run arbitrary cypher queries
-app.get('//query/:query_name', U.cypher);
-app.get('//query/', U.list_queries);
-app.get('//query', U.list_queries);
+// load resources, generate standardized answer
+var U = R.mapObj(mkStandardAnswer, {
+	add: r.modifyDocument('add'),
+	update: r.modifyDocument('update'),
+	remove: r.modifyDocument('remove'),
+	queries: r.queries,
+	query: r.query
+});
 
 // new doc, generate id
-app.post('/:dataset/:type/', U.POST); 
-app.post('/:dataset/:type', U.POST); 
+app.post('/:dataset/:type/', U.add); 
+app.post('/:dataset/:type', U.add); 
+app.post('/:dataset/:type/*', U.add);
 
-// new doc, specify id
-app.post('/:dataset/:type/*', U.POST);
-
-// update document
-app.put('/:dataset/:type/*', U.PUT);
+app.put('/:dataset/:type/', U.update);
+app.put('/:dataset/:type', U.update);
+app.put('/:dataset/:type/*', U.update);
 
 // delete document
-app.delete('/:dataset/:type/*', U.DELETE);
+app.delete('/:dataset/:type/', U.remove);
+app.delete('/:dataset/:type', U.remove);
+app.delete('/:dataset/:type/*', U.remove);
 
+// run arbitrary cypher queries
+app.get('//query/:query_name', U.query);
+app.get('//query/', U.queries);
+app.get('//query', U.queries);
+app.get('//queries/', U.queries);
+app.get('//queries', U.queries);
 
 mach.serve(app);
