@@ -3,23 +3,33 @@
 
 ## Input
 
-	/:dataset/:type/:id
+	/:dataset/:type(/:id)
+	- source: id
+	- target: id
 
 - Dataset (`some-string`)
 - Type (`PIT`)
 - Identifiers (`abc123`)
 
 Each type corresponds to a structure in the graph, a node or edge.
-This is defined in your configuration and for maximum confusion,
-when no configuration is specified, the types are `node` and `edge`.
+This is defined in your configuration.
 
-They correspond to the structures *node* and *edge* in the graph
-[see typeSpecific.js](../core/typeSpecific.js) but are not the same thing.
+For maximum confusion, when no configuration is specified,
+the types are `node` and `edge` are default. Respectively they
+create *nodes* and *edges* in the graph but they are not the same thing.
+
+Structures are a part of the Graphmalizer core,
+[see neo4j.yaml](../core/neo4j.yaml)
 
 All identifiers must be unique, across all datasets.
 
 Identifiers which are lexicographically equal ("equal as a character string"),
 are considered to point to the same structure, otherwise not.
+
+The node structure requires `id`. The edge structure requires `source`,
+`target` and will derive `id` from it, if not specified.
+
+[see typeSpecific.js](../core/typeSpecific.js)
 
 # Graph
 
