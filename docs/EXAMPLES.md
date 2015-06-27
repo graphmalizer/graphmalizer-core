@@ -18,47 +18,18 @@ Parameters `s`,`t`,`id` and `doc`.
 
 ### Configuration
 
-The relation `LIES_IN` and the object `PIT` are predefined ([here](conf/typedefs.js)):
-
-	exports.PIT = {
-		node: {}
-	}
-
-	exports.LIES_IN = {
-		edge: {
-			source: 'from',
-			target: 'to'
-		}
-	}
-
-Here, `source` and `target` mean that this can be pulled out, so
-
-	http POST :5000/foo/LIES_IN source:=1 target:=2 doc:='{"a":123}'
-
-is equivalent to
-
-	http POST :5000/foo/LIES_IN doc:='{"from":1, "too":2, "a":123}'
-
-except for that `from` and `too` end up in the ES document and Node edge
-properties.
+The type `edge` and the type `node` are predefined ([here](../utils/config.js)).
+You probably want to use your [own config](../config.json).
 
 ### Basic overview
 
 Create edge
 
-	http POST :5000/foo/LIES_IN source:=1 target:=2 doc:='{"a":123}'
+	http POST :5000/foo/edge source:=1 target:=2 doc:='{"a":123}'
 
-Create node with id `foo/999`.
+Create node with id `1`.
 
-	http POST :5000/foo/PIT/999 doc:='{"hey":"there"}'
-
-Look it up in Neo using `id` index.
-
-	http GET :5000//query/get-node-by-id id="foo/999"
-
-Find adjecent edges
-
-	http GET :5000//query/get-adjecent id="foo/999"
+	http POST :5000/foo/node/1 doc:='{"hey":"there"}'
 
 ### Example
 
@@ -150,7 +121,7 @@ Create dangling edge
 	    "ok": true
 	}
 
-![dangling edge](illustrations/singular-edge.png)
+![dangling edge](singular-edge.png)
 
 Get the vacant node directly from Neo4J.
 
@@ -252,6 +223,6 @@ Notice `:_VACANT` label is gone.
 	    "ok": true
 	}
 
-![inhabited node](illustrations/inhabited-node.png)
+![inhabited node](inhabited-node.png)
 
 
