@@ -46,7 +46,7 @@ Again, an example:
 > C ~ edge
 
 Given this association, updating a document of a certain type will in turn update the corresponding
-components in the graph.
+structure in the graph.
 
 For maximum confusion, when no configuration is specified,
 the [default types](../core/config.js) are `node` and `edge`.
