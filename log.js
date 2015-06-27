@@ -24,7 +24,7 @@ var log3 = function(a,b,c){
 }
 
 var log4 = function(a,b,c,d){
-	console.log(a,twidle,b,arrow,'\n\t query:',c,'\n\t params:',d,'\n');
+	console.log(a,twidle,b,arrow,'\n',c,'\nparams:',d,'\n');
 }
 
 var logObj = R.curry(function(color, thing, json) {
@@ -51,18 +51,23 @@ var logQuery = R.curry(function(color, thing, op, query, params) {
 	log4(color(thing), c.bgBlue(op), c.underline(query), pp.render(params))
 })
 
+
+
 // json -> logmsg
 exports.REQ = logObj(c.magenta, "REQ")
 exports.ARGS = function() {} //logObj(R.compose(c.underline, c.blue), "ARGS")
 exports.DATASET = function() {} // logObj(R.compose(c.underline, c.magenta), "DATASET")
-exports.TYPE = logObj(R.compose(c.underline, c.gray), "TYPE")
+exports.TYPE = function() {} //logObj(R.compose(c.underline, c.gray), "TYPE")
+
+exports.INPUT = logObj(R.compose(c.underline, c.yellow), "INPUT")
 
 // op, json -> logmsg
 exports.NEO = logOp(R.compose(c.underline, c.yellow), "Neo4J")
 exports.Elastic = logOp(R.compose(c.underline, c.magenta), "Elastic")
 
 // op, query, params -> logmsg
-exports.QUERY = logQuery(R.compose(c.underline, c.magenta), "CYPHER")
+exports.QUERY = logQuery(R.compose(c.underline, c.magenta), "QUERY")
+exports.STRUCTURE = logQuery(R.compose(c.bgYellow, c.black));
 
 // err -> logmsg
 exports.ERR = logErr;
