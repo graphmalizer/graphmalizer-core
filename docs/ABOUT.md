@@ -5,33 +5,21 @@
 
 	/:dataset/:type/:id
 
-- Dataset (`bag.cities.nl`)
+- Dataset (`some-string`)
 - Type (`PIT`)
-- Identifiers (`x/a`)
+- Identifiers (`abc123`)
 
-Datasets have a root name, simply `rootname.subname1.subname2`.
+Each type corresponds to a structure in the graph, a node or edge.
+This is defined in your configuration and for maximum confusion,
+when no configuration is specified, the types are `node` and `edge`.
 
-Identifiers without *x*, (so `a`, no slash) are expanded to `x/a`
-with *x* the current dataset rootname.
+They correspond to the structures *node* and *edge* in the graph
+[see typeSpecific.js](../core/typeSpecific.js) but are not the same thing.
 
-Note: We could prefix every ES index/type and every Neo label to
-provide multi-tenancy or to avoid global scope pollution. This is left out for brevity.
+All identifiers must be unique, across all datasets.
 
-## Mapping to ES
-
-- Index = Dataset name
-- Type = type name
-- ES id = expanded datum id
-
-## Mapping to Neo4j
-
-Every node/edge gets a label `:_` and a *glui*, Graph label-unique identifier.
-
-	CREATE CONSTRAINT ON (n:_) ASSERT n.glui IS UNIQUE
-
-- Index = label `:I_DATASETNAME`
-- Type = label `:T_TYPENAME`
-- Neo ID = property {glui: {expanded datum id}}
+Identifiers which are lexicographically equal ("equal as a character string"),
+are considered to point to the same structure, otherwise not.
 
 # Graph
 
