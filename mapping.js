@@ -23,7 +23,7 @@ var hashOf = function(things){
 	type ~> Type
 */
 var normalize = function(f) {
-	return function(d, ty, id, ps, pt, doc)
+	return function(d, ty, id, source, target, doc)
 	{
 		var dataset = Dataset.cget(d);
 		var type = Type.cget(ty);
@@ -31,46 +31,32 @@ var normalize = function(f) {
 		log.DATASET(dataset);
 		log.TYPE(type);
 
-		// both nodes/edge can have id
-		var i = id || (type.opts.id && doc && doc[type.opts.id]);
-
-		// nodes must have an id?
+		// nodes must have an id!
 		if(type.isNode){
 
-			if(!i)
-				throw new Error(u.format('Must specify id when creating a node! (doc.%s)', type.opts.id));
+			if(!id)
+				throw new Error(u.format('Must specify id when creating a node!'));
 		
 			return f(dataset, type, id, undefined, undefined, doc);
 		}
 
 		// we are dealing with an edge
 		if(type.isEdge){
-			
-			// TODO oh oh,.. no this is wrong. Sometimes need s/t, but not for cypher queries. need to restructure this
-			if(!i){		
-				// if source/target are not specified as parameters,
-				// look them up in the document
-				var s = ps || (type.opts.source && doc && doc[type.opts.source]);
-				var t = pt || (type.opts.target && doc && doc[type.opts.target]);
-		
-				if(!s)
-					throw new Error(u.format("Missing source field '%s'", type.opts.source));
-		
-				if(!t)
-					throw new Error(u.format("Missing target field '%s'", type.opts.target));
-		
-				var source_id = s;
-				var target_id = t;
-			
-			}
-			// if no id is specified, build one
-			var canonical_id = i || hashOf([
-				source_id.replace('/', '.'),
-				type.name,
-				target_id.replace('/', '.')				
-			]);
 
-			return f(dataset, type, canonical_id, source_id, target_id, doc);
+			if(!source)
+				throw new Error(u.format("Missing source"));
+	
+			if(!target)
+				throw new Error(u.format("Missing target"));
+
+			// if no id is specified, build one
+			var eid = id || hashOf([
+					source.replace('/', '.'),
+					type.name,
+					target.replace('/', '.')
+				]);
+
+			return f(dataset, type, eid, source, target, doc);
 		}
 	} 
 }
