@@ -15,7 +15,7 @@
 
 A **structure** in the graph is a node or edge.
 
-![node](node.svg)*node* 		![edge](edge.svg)*edge*
+![node](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/node.svg)*node* 		![edge](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/edge.svg)*edge*
 
 Structures are a part of the Graphmalizer core,
 [see neo4j.yaml](../core/neo4j.yaml). 
@@ -24,13 +24,13 @@ Types are the sorts of documents you feed the graphmalizer.
 Here are some documents with types `A`, `B`, `C` and
 identifiers `012`, `123`, `234`, `345`.
 
-![document](document.svg)`A`,`012` ![document](document.svg)`A`,`123` ![document](document.svg)`B`,`234` ![document](document.svg)`C`,`234`
+![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A`,`012` ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A`,`123` ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`B`,`234` ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`C`,`234`
 
 To each type you associate a corresponding structure.
 
-![document](document.svg)`A` ~ ![node](node.svg)*node*
-![document](document.svg)`B` ~ ![node](node.svg)*node*
-![document](document.svg)`C` ~ ![node](edge.svg)*edge*
+![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A` ~ ![node](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/node.svg)*node*
+![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`B` ~ ![node](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/node.svg)*node*
+![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`C` ~ ![node](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/edge.svg)*edge*
 
 Updating a document of a certain type will in turn update the corresponding
 components in the graph.
