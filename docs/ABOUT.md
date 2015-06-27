@@ -14,12 +14,24 @@
 ### Types and structures
 
 A **structure** in the graph is a node or edge.
+
+![node](node.svg)*node* 		![edge](edge.svg)*edge*
+
 Structures are a part of the Graphmalizer core,
 [see neo4j.yaml](../core/neo4j.yaml). 
 
 Types are the sorts of documents you feed the graphmalizer.
+Here are some documents with types `A`, `B`, `C` and
+identifiers `012`, `123`, `234`, `345`.
+
+![document](document.svg)`A`,`012` ![document](document.svg)`A`,`123` ![document](document.svg)`B`,`234` ![document](document.svg)`C`,`234`
 
 To each type you associate a corresponding structure.
+
+![document](document.svg)`A` ~ ![node](node.svg)*node*
+![document](document.svg)`B` ~ ![node](node.svg)*node*
+![document](document.svg)`C` ~ ![node](edge.svg)*edge*
+
 Updating a document of a certain type will in turn update the corresponding
 components in the graph.
 
@@ -28,8 +40,9 @@ configuration](../config.json).
 
 For maximum confusion, when no configuration is specified,
 the [default types](../core/config.js) are `node` and `edge`.
-Respectively they *manipulate* nodes and edges in the graph but they
-are not the same thing.
+They *manipulate* nodes and edges in the graph and even
+the names are the same, however
+types are not the same thing as structures.
 
 ### Identifiers
 
@@ -39,7 +52,7 @@ Identifiers which are lexicographically equal ("equal as a character string"),
 are considered to point to the same structure, otherwise not.
 
 The node structure requires `id`. The edge structure requires `source`,
-`target` and will derive `id` from it, if not specified.
+`target` and will derive `id` from them, if `id` is not specified.
 
 [see typeSpecific.js](../core/typeSpecific.js)
 
@@ -65,42 +78,38 @@ You can create, update or remove a node. Each node has an identifier.
 
 	POST /foo.bar/baz-node/123
 
-	x							201 (:INHAB {id:'foo/123' ...})
-	({id:'foo/123'})			200 (:INHAB {...})
-	(:INHAB {id:'foo/123'})		403 // forbidden
+	x								201 (:_ {id:'foo/123' ...})
+	(:_:_VACANT {id:'foo/123'})		200 (:_ {...})
+	(:_ {id:'foo/123'})				403 // forbidden
 
 ### Update Node
 
 	PUT /foo.bar/baz-node/123
 
-	x							404 // not found
-	({id:'foo/123'})			404 // not found
-	(:INHAB {id:'foo/123'}) 	200 (:INHAB {id:'foo/123' ...})	
+	x								404 // not found
+	(:_:_VACANT {id:'foo/123'})		404 // not found
+	(:_ {id:'foo/123'}) 			200 (:_ {id:'foo/123' ...})	
 
 ### Delete Node
 
 	DELETE /foo.bar/baz-node/123
 
-	x							404 // not found
-	({id:'foo/123'})			404 // not found
-	(:INHAB {id:'foo/123'}) 	200 x
+	x								404 // not found
+	(:_:_VACANT {id:'foo/123'})		404 // not found
+	(:_ {id:'foo/123'}) 			200 x
 
 
 ## Edges
 
-Edges, like nodes, must be given an identifier.
+The edge structure requires `source` and `target` identifiers
+and will derive `id` from them, if `id` is not specified.
 
-However, if you don't have identifiers for your edge datums,
-we will infer an identifier. Namely, we combine
+This implies that if you don't specify an identifier, the edge
+is identified by `[source,type,target]` and consequently one
+can have only one such edge in your graph.
 
- - source `x/a`
- - target `y/b`
- - type
- - dataset
-
-into the edge-identifier.
-
-In this case, for each dataset and each type, you can have at most one edge between each node.
+Put differently, for each type one can have at most two edges
+between each node (`s->t`, `t->s`).
 
 ### Create Edge
 
@@ -108,21 +117,21 @@ In this case, for each dataset and each type, you can have at most one edge betw
 
 Pass two parameters:
 
-- source = `a` | `x/a`
-- target = `b` | `y/b`
+- `source` or `s`, identifier
+- `target` or `t`, identifier
 
-look for two nodes `({id:'x/a'})`,`({id:'y/b'})
+This looks for two nodes `(:_ {id: s})`, `(:_ {id: t})`.
 
 Create both sides and the edge inbetween:
 
-	 x   x			({id:'x/a'}) -> ({id:'y/b'})
+	 x   x			(:_ {id: s}) -> (:_ {id: t})
 
 Create either source or target and the edge inbetween:
 
-	( )  x			( ) -> ({id:'y/b'})
-	(-)  x			(-) -> ({id:'y/b'})
-	 x  ( )			({id:'x/a'}) -> ( )
-	 x  (-)			({id:'x/a'}) -> (-)
+	( )  x			( ) -> ({id: t})
+	(-)  x			(-) -> ({id: t})
+	 x  ( )			({id: s}) -> ( )
+	 x  (-)			({id: s}) -> (-)
 
 Just create the edge:
 
@@ -135,7 +144,12 @@ Just create the edge:
 
 	PUT /foo.bar/baz-edge/:id
 
-look for two nodes `({id:'x/a'})`,`({id:'y/b'})
+locate the edge by identifier directly,
+either with passed in `id` or derived from `s`,`t` identifier.
+
+`(:_)-[e:_ {id: id}]-(:_)`
+
+If not found, look for two nodes `({id: s})`,`({id: t})`.
 
 	 x   x			404
 	( )  x			404
@@ -143,14 +157,14 @@ look for two nodes `({id:'x/a'})`,`({id:'y/b'})
 	 x  ( )			404
 	 x  (-)			404
 
-Edge cannot be found
+Nodes found, but edge cannot be found
 
 	( ) ( )			404
 	(-)	( )			404
 	( ) (-)			404
 	(-) (-)			404
 
-Edge cannot be found
+Edge was found, either directly (using some id) or through nodes.
 
 	( )-->( )			( ) -> ( )
 	(-)-->( )			(-) -> ( )
@@ -161,24 +175,26 @@ Edge cannot be found
 
 	DELETE /foo.bar/baz-edge/:id
 
-look for edge identified by two nodes `({id:'x/a'})` `({id:'y/b'}) (plus relevant dataset/type)
+Same as update, however,
 
-We now write `--( )` to indicate a node with *degree strictly greater than 1*.
+we now write `--( )` to indicate a node with *degree strictly greater than 1*.
 
 Cannot find one of the nodes:
 
-	   x     x			404
-	   x    ( )         404
-	  ( )    x			404
-	   x    (-)         404
-	  (-)    x			404
+	 x   x			404
+	( )  x			404
+	(-)  x			404
+	 x  ( )			404
+	 x  (-)			404
 
-Found the nodes, but no edge with the right id.
+Nodes found, but edge cannot be found (through id nor nodes)
 
-	  ( )   ( )			404
-	  (-)   ( )			404
-	  ( )   (-)			404
-	  (-)   (-)			404
+	( ) ( )			404
+	(-)	( )			404
+	( ) (-)			404
+	(-) (-)			404
+
+Otherwise we found it.
 
 Remove just edge
 
