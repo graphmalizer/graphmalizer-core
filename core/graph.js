@@ -4,7 +4,7 @@ var YAML = require('yamljs')
 
 // run cypher query and return promise
 var cypher = require('../utils/neo4j');
-var log = require('./log')
+var log = require('../utils/log')
 
 var qs = YAML.parse(fs.readFileSync('./core/graph.yaml', {encoding: 'utf8'}));
 

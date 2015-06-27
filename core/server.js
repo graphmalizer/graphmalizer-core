@@ -1,7 +1,7 @@
 // HTTP frontend
 var R = require('ramda');
 var Q = require('kew');
-var log = require('./log');
+var log = require('../utils/log');
 
 var mach = require('mach');
 var app = mach.stack();

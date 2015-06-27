@@ -1,7 +1,7 @@
 var Q = require('kew');
 var R = require('ramda');
 
-var log = require('./log');
+var log = require('../utils/log');
 
 var Type = require('./type');
 var Dataset = require('./dataset');

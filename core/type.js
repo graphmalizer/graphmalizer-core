@@ -1,11 +1,11 @@
 var R = require('ramda');
 var u = require('util');
 
-var Cached = require('./cache');
+var Cached = require('../utils/cache');
+var TYPES = require('../utils/config').types;
 
 // we are screaming here, because it is really important
-var STRUCTURES = require('./neo4j').structures;
-var TYPES = require('./config').types;
+var STRUCTURES = require('./graph').structures;
 var TYPE_SPECIFIC = require('./typeSpecific');
 
 var Type = function (s)

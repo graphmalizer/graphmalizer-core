@@ -1,5 +1,5 @@
 var R = require('ramda');
-var types = require('./config').types;
+var types = require('../utils/config').types;
 
 // create hash from a bunch of things
 var crypto = require('crypto');
