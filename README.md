@@ -3,7 +3,7 @@ some sort of graphmalizer, take sets of documents into elasticsearch and neo.
 
 see [ABOUT](ABOUT.md)
 
-![much looks](da-lookz.png)
+![much looks](illustrations/da-lookz.png)
 
 define your types here [`config.json`](config.json)
 
