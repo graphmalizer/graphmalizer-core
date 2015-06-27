@@ -21,12 +21,17 @@ Structures are a part of the Graphmalizer core,
 [see neo4j.yaml](../core/neo4j.yaml). 
 
 Types are the sorts of documents you feed the graphmalizer.
-Here are some documents with types `A`, `B`, `C` and
+
+For example, here are some documents with types `A`, `B`, `C` and
 identifiers `012`, `123`, `234`, `345`.
 
 ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A`,`012` ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A`,`123` ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`B`,`234` ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`C`,`234`
 
-To each type you associate a corresponding structure.
+To each type you assign a corresponding structure. Which types are
+defined and to which structure they map is defined in [your
+configuration](../config.json).
+
+Again, an example:
 
 ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A` ~ ![node](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/node.svg)*node*
 
@@ -40,11 +45,8 @@ To each type you associate a corresponding structure.
 
 > C ~ edge
 
-Updating a document of a certain type will in turn update the corresponding
+Given this association, updating a document of a certain type will in turn update the corresponding
 components in the graph.
-
-Which types are defined and how they maps to a structure is defined in [your
-configuration](../config.json).
 
 For maximum confusion, when no configuration is specified,
 the [default types](../core/config.js) are `node` and `edge`.
