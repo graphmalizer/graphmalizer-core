@@ -1,10 +1,8 @@
 var u = require('util');
-var c = require('chalk');
-var R = require('ramda');
-var pp = require('prttty');
 
 var Dataset = require('./dataset');
 var Type = require('./type');
+var log = require('./log');
 
 
 // create hash from a bunch of things
@@ -30,8 +28,8 @@ var normalize = function(f) {
 		var dataset = Dataset.cget(d);
 		var type = Type.cget(ty);
 
-		console.log(c.underline(c.magenta('DATASET')),'=>',pp.render(dataset));		
-		console.log(c.underline(c.gray('TYPE')),'=>',pp.render(type));
+		log.DATASET(dataset);
+		log.TYPE(type);
 
 		// both nodes/edge can have id
 		var i = id || (type.opts.id && doc && doc[type.opts.id]);

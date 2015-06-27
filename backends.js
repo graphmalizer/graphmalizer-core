@@ -1,10 +1,9 @@
 var Neo4J = new require('neo4j')
 var R = require('ramda');
 var Q = require('kew');
-var c = require('chalk');
 var u = require('util');
-var pp = require('prttty');
 
+var log = require('./log');
 var queries = require('./queries');
 
 
@@ -30,7 +29,7 @@ module.exports = function(opts) {
 		// insert proper querystring
 		thing.query = queries[query_name].query_string;
 		
-		console.log(c.bgBlue(query_name), c.underline(thing.query) ,'~', pp.render(thing.params));
+		log.QUERY(query_name, thing.query, thing.params);
 		
 		// execute query
 		return cypher(thing);

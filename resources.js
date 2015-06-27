@@ -1,38 +1,22 @@
 var Q = require('kew');
 var R = require('ramda');
-var c = require('chalk');
-var u = require('util');
-var pp = require('prttty');
 
-var mapping = require('./mapping')
-var backends = require('./backends');
-var connection = backends('http://neo4j:waag@localhost:7474');
-
-var colours = {
-	operation: {
-		add: c.bgGreen,
-		update: c.bgYellow,
-		remove: c.bgRed,
-	},
-	backend: {
-		Elastic: R.compose(c.underline, c.magenta),
-		Neo4J: R.compose(c.underline, c.yellow)
-	}
-}
+var log = require('./log');
+var mapping = require('./mapping');
+var connection = require('./backends')('http://neo4j:waag@localhost:7474');
 
 // operate on backend
-perform =function(operation, mapping) {
-	var op = colours.operation[operation](u.format(' %s ',operation));
-	console.log(c.gray('NEO =>'), op, ' ~ ', pp.render(mapping))
-	return connection[operation](mapping);
+perform = function(operation, mapping) {
+	log.NEO(operation, mapping)
+	return connection[operation](mapping)
 };
 
 function resource(op){
 	return function(conn){
 		var args = conn.params;
-		console.log(pp.render(args));
+		// console.log(pp.render(args));
 		return Q.fcall(function(){
-				console.log(c.underline(c.blue('ARGS')),'=>',pp.render(args));
+				log.ARGS(args);
 				
 				// perform normalization & mapping to backends
 				var m = mapping(

@@ -16,4 +16,6 @@ var Type = function (s){
 		this.opts = TYPES[s].edge;
 }
 
+Type.TYPES = TYPES;
+
 module.exports = Cached(Type);
