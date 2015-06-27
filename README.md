@@ -50,3 +50,12 @@ create a node
 Development, fish shell
 
 	nodemon -w (echo *.js *.cypher) server.js
+
+### config file
+
+specify config file using
+
+- environment var `GRAPHMALIZER_CONFIG`
+- commandline argument `--config`
+- or by placing `config.json` in the startup directory
+
