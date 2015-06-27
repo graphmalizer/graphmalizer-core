@@ -22,10 +22,10 @@ They define the a central part of the graphmalizer core,
 
 **Types** are the sorts of documents you feed the graphmalizer.
 
-For example, here are some documents with types `A`, `B`, `C` and
-identifiers `012`, `123`, `234`, `345`.
+Here are some documents with types `A`, `B`, `C` and
+identifiers *012*, *123*, *234*, *345*.
 
-![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A`,`012` ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A`,`123` ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`B`,`234` ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`C`,`234`
+![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A`*012* ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A`*123* ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`B`*234* ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`C`*234*
 
 #### Configuration
 
@@ -33,9 +33,7 @@ To each type you assign a corresponding structure. Which types are
 defined and to which structure they map is defined in [your
 configuration](../config.json).
 
-Again, an example:
-
-> A ~ node, B ~ node, C ~ edge
+For example:
 
 ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A` ~ ![node](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/node.svg)*node*
 
