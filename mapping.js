@@ -4,16 +4,7 @@ var Dataset = require('./dataset');
 var Type = require('./type');
 var log = require('./log');
 
-// create hash from a bunch of things
-var crypto = require('crypto');
 
-var hashOf = function(things){
-	var shasum = crypto.createHash('sha224');
-	things.forEach(function(x){
-		shasum.update(x);
-	});
-	return shasum.digest('base64');
-}
 
 module.exports = function(dname, tname, id, source, target, doc)
 {	
