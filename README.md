@@ -13,8 +13,9 @@ adding a node to the source or target idea will update the vacant node:
 
 ![atleast one side covered](docs/inhabited-node.png)
 
-the interface is 'document' oriented, you pass `/:dataset/:type(/:id)`.
-And when required, parameters `source` and `target`.
+the interface is 'document' oriented, you pass a document to `/:dataset/:type(/:id)`.
+And depending on the document *type* you pass `id`, `source` and `target`
+(as parameters).
 
 
 define your types here [`config.json`](config.json)
