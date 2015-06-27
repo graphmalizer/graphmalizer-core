@@ -5,18 +5,7 @@ var log = require('./log');
 var mapping = require('./mapping');
 var neo = require('./neo4j');
 
-// operate on backend
-perform = function(operation, mapping) {
-	log.NEO(operation, mapping)
-
-	if(mapping.isNode)
-		return neo.node(operation, mapping.params);
-
-	if(mapping.isEdge)
-		return neo.edge(operation, mapping.params);
-};
-
-function resource(op){
+function resource(operation){
 	return function(conn){
 		var args = conn.params;
 		// console.log(pp.render(args));
@@ -29,9 +18,14 @@ function resource(op){
 					args.source || args.s, args.target || args.t,
 					args.doc
 				);
-			
-				// apply operation on all backends
-				return perform(op, m);
+
+				log.NEO(operation, mapping)
+
+				if(m.isNode)
+					return neo.node(operation, m.params);
+
+				if(m.isEdge)
+					return neo.edge(operation, m.params);
 			});
 	}
 }
