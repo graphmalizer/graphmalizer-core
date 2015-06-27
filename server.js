@@ -1,9 +1,7 @@
 // HTTP frontend
 var R = require('ramda');
 var Q = require('kew');
-var c = require('chalk');
-var u = require('util');
-var pp = require('prttty');
+var log = require('./log');
 
 var mach = require('mach');
 var app = mach.stack();
@@ -14,7 +12,7 @@ app.use(mach.params);
 // standardized answer
 var answer = function(mkPromise){
 	return function(conn){
-		console.log(c.magenta("REQ"), '=>', pp.render(conn.params));
+		log.REQ(conn.params);
 		
 		// get timestamp
 		var t0  = process.hrtime();
@@ -32,7 +30,7 @@ var answer = function(mkPromise){
 				})
 			})
 			.fail(function(err) {
-				console.error(c.red('ERR'), c.grey('=>'), err);
+				log.ERR(err);
 				return conn.json(500, {ok: false,
 					error: err.message,
 					stacktrace: err.stack.split(/\n\s*/)
