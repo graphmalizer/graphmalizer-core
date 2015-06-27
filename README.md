@@ -1,7 +1,7 @@
 
 some sort of graphmalizer, take sets of documents into elasticsearch and neo.
 
-see [ABOUT](ABOUT.md)
+see [ABOUT](docs/ABOUT.md)
 
 ![much looks](docs/da-lookz.png)
 
