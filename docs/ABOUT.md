@@ -35,17 +35,13 @@ configuration](../config.json).
 
 Again, an example:
 
-![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A` ~ ![node](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/node.svg)*node*
+> A ~ node, B ~ node, C ~ edge
 
-> A ~ node
+![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`A` ~ ![node](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/node.svg)*node*
 
 ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`B` ~ ![node](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/node.svg)*node*
 
-> B ~ node
-
 ![document](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/document.svg)`C` ~ ![node](https://cdn.rawgit.com/graphmalizer/prototype/bb05daee8af3dfb3b22552bb3958b5cdab4c9ff0/docs/edge.svg)*edge*
-
-> C ~ edge
 
 Given this association, updating a document of a certain type will in turn update the corresponding
 structure in the graph.
