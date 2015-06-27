@@ -1,3 +1,5 @@
+var argv = require('minimist')(process.argv.slice(2));
+
 var R = require('ramda');
 var c = require('chalk');
 var u = require('util');
@@ -6,7 +8,7 @@ var ppp = require('prttty');
 var pp = {
 	render: R.compose(
 		ppp.render.bind(ppp),
-		R.omit(['doc','params']))
+		R.omit(argv.verbose ? [] : ['doc','params']))
 }
 
 exports.pp = pp;
@@ -60,7 +62,7 @@ exports.NEO = logOp(R.compose(c.underline, c.yellow), "Neo4J")
 exports.Elastic = logOp(R.compose(c.underline, c.magenta), "Elastic")
 
 // op, query, params -> logmsg
-exports.QUERY = logQuery(R.compose(c.underline, c.magenta), "DATASET")
+exports.QUERY = logQuery(R.compose(c.underline, c.magenta), "CYPHER")
 
 // err -> logmsg
 exports.ERR = logErr;
