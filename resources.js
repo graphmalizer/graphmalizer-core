@@ -2,31 +2,43 @@ var Q = require('kew');
 var R = require('ramda');
 
 var log = require('./log');
-var mapping = require('./mapping');
 var neo = require('./neo4j');
 
-function resource(operation){
+var Type = require('./type');
+var Dataset = require('./dataset');
+
+var parseParams = function(params){
+	log.ARGS(params);
+	return {
+		dataset: params.dataset,
+		type: params.type,
+		id: params.splat || params.id,
+		source: params.source || params.s,
+		target: params.target || params.t,
+		doc: params.doc
+	}
+};
+
+function resource(action){
 	return function(conn){
-		var args = conn.params;
-		// console.log(pp.render(args));
-		return Q.fcall(function(){
-				log.ARGS(args);
-				
-				// perform normalization & mapping to backends
-				var m = mapping(
-					args.dataset, args.type, args.splat,
-					args.source || args.s, args.target || args.t,
-					args.doc
-				);
+		
+		// normalize/filter the input
+		var input = parseParams(conn.params);
+		
+		var ds = new Dataset(input.dataset)
+		var type = new Type(input.type);
+		var id = type.identifier(input);
 
-				log.NEO(operation, mapping)
+		log.INPUT({id: id, in_id: input.id, s: input.source, t: input.target})
 
-				if(m.isNode)
-					return neo.node(operation, m.params);
-
-				if(m.isEdge)
-					return neo.edge(operation, m.params);
-			});
+		return neo.structure(type.structure, action, {
+			id: id,
+			dataset: ds.name,
+			type: type.name,
+			source: input.source,
+			target: input.target,
+			doc: input.doc
+		})
 	}
 }
 
