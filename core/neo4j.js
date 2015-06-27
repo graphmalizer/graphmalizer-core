@@ -11,7 +11,7 @@ var c = require('./config').Neo4J
 var log = require('./log')
 
 var db = new Neo4J.GraphDatabase(u.format('http://%s:%s@%s:%s', c.username, c.password, c.host, c.port));
-var qs = YAML.parse(fs.readFileSync('neo4j.yaml', {encoding: 'utf8'}));
+var qs = YAML.parse(fs.readFileSync('./core/neo4j.yaml', {encoding: 'utf8'}));
 
 // run cypher query and return promise
 var cypher = function(opts)
