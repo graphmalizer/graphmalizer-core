@@ -3,7 +3,19 @@ some sort of graphmalizer, take sets of documents into elasticsearch and neo.
 
 see [ABOUT](ABOUT.md)
 
-![much looks](illustrations/da-lookz.png)
+![much looks](docs/da-lookz.png)
+
+One adds node and edges willy nilly, graphmalizer will stitch your id's together.
+
+![oh my, a bare edge](docs/singular-edge.png)
+
+adding a node to the source or target idea will update the vacant node:
+
+![atleast one side covered](docs/inhabited-node.png)
+
+the interface is 'document' oriented, you pass `/:dataset/:type(/:id)`.
+And when required, parameters `source` and `target`.
+
 
 define your types here [`config.json`](config.json)
 
