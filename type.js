@@ -1,8 +1,12 @@
+var u = require('util');
 var Cached = require('./cache');
 
 var TYPES = require('./config').types;
 
 var Type = function (s){
+	if(s && !TYPES[s])
+		throw new Error(u.format('Unkown type "%s", must be one of %s', type.name, Type.TYPES))
+
 	this.name = s || '*';
 	
 	this.isNode = (TYPES[s] && TYPES[s].node && true) || false
@@ -15,7 +19,5 @@ var Type = function (s){
 	if(this.isEdge)
 		this.opts = TYPES[s].edge;
 }
-
-Type.TYPES = TYPES;
 
 module.exports = Cached(Type);
