@@ -1,15 +1,6 @@
 var R = require('ramda');
 var types = require('../utils/config').types;
-
-// create hash from a bunch of things
-var crypto = require('crypto');
-var hashOf = function(things){
-	var shasum = crypto.createHash('sha224');
-	things.forEach(function(x){
-		shasum.update(x);
-	});
-	return shasum.digest('base64');
-}
+var hashOf = require('../utils/hashOf');
 
 // we define how identifiers are created for each structure here
 var defaultOptions = {
