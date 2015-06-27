@@ -11,15 +11,27 @@
 - Type (`PIT`)
 - Identifiers (`abc123`)
 
-Each type corresponds to a structure in the graph, a node or edge.
-This is defined in your configuration.
+### Types and structures
+
+A **structure** in the graph is a node or edge.
+Structures are a part of the Graphmalizer core,
+[see neo4j.yaml](../core/neo4j.yaml). 
+
+Types are the sorts of documents you feed the graphmalizer.
+
+To each type you associate a corresponding structure.
+Updating a document of a certain type will in turn update the corresponding
+components in the graph.
+
+Which types are defined and how they maps to a structure is defined in [your
+configuration](../config.json).
 
 For maximum confusion, when no configuration is specified,
-the types are `node` and `edge` are default. Respectively they
-create *nodes* and *edges* in the graph but they are not the same thing.
+the [default types](../core/config.js) are `node` and `edge`.
+Respectively they *manipulate* nodes and edges in the graph but they
+are not the same thing.
 
-Structures are a part of the Graphmalizer core,
-[see neo4j.yaml](../core/neo4j.yaml)
+### Identifiers
 
 All identifiers must be unique, across all datasets.
 
