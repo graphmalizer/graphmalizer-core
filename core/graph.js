@@ -1,28 +1,12 @@
 var u = require('util')
 var fs = require('fs')
-
-var Q = require('kew')
-var R = require('ramda')
-
-var Neo4J = require('neo4j')
 var YAML = require('yamljs')
 
-var c = require('./config').Neo4J
+// run cypher query and return promise
+var cypher = require('../utils/neo4j');
 var log = require('./log')
 
-var db = new Neo4J.GraphDatabase(u.format('http://%s:%s@%s:%s', c.username, c.password, c.host, c.port));
-var qs = YAML.parse(fs.readFileSync('./core/neo4j.yaml', {encoding: 'utf8'}));
-
-// run cypher query and return promise
-var cypher = function(opts)
-{
-	var d = Q.defer();
-	db.cypher(opts, function(err,resp){
-		if(err) d.reject(err);
-		else d.resolve(resp);
-	});
-	return d.promise;
-}
+var qs = YAML.parse(fs.readFileSync('./core/graph.yaml', {encoding: 'utf8'}));
 
 // definitions
 exports.queries = qs.queries
@@ -52,6 +36,6 @@ exports.structure = function(structure, action, params)
 	return cypher({params: params, query: q});
 }
 
-// neo.structure('node','add', {type: 'pit', id: 'id-1'});
-// neo.structure('edge','add', {type: 'same-as', s: 'id-1', t: 'id-1'});
-// neo.query('klont', {id: 'id-1'});
+// .structure('node','add', {type: 'pit', id: 'id-1'});
+// .structure('edge','add', {type: 'same-as', s: 'id-1', t: 'id-1'});
+// .query('klont', {id: 'id-1'});
