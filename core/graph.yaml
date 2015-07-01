@@ -1,35 +1,4 @@
 structures:
-   type:
-      add:
-         ruleset:
-            - | x => (:TYPE)
-            - | ( ) => 500
-            - | (*) => 500
-            - | (:TYPE) => 500
-         cypher: |
-            CREATE (n:TYPE {name: {name}})
-            RETURN n
-      remove:
-         cypher: |
-            MATCH (t:TYPE {name: {name}})
-            OPTIONAL MATCH (t)<-[e:HAS]-(n)
-            OPTIONAL MATCH (n)<-[r:_]-()
-            DELETE r, n, e, t
-            RETURN true
-   relation:
-      add:
-         cypher: |
-            MATCH (s:TYPE {type: {source}})
-            MATCH (t:TYPE {type: {target}})
-            CREATE (t)-[:T]->(n:REL {name: {name}})<-[:S]-(s)
-            RETURN n
-      remove:
-         cypher: |
-            MATCH (t:TYPE {type: {type}})
-            OPTIONAL MATCH (t)<-[e:HAS_TYPE]-(n)
-            OPTIONAL MATCH (n)<-[r:_]-()
-            DELETE r, n, e, t
-            RETURN true
    node:
       add:
          ruleset:
