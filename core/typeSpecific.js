@@ -1,4 +1,5 @@
 var R = require('ramda');
+var u = require('util');
 var types = require('../utils/config').types;
 var hashOf = require('../utils/hashOf');
 
