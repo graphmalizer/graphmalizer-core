@@ -66,7 +66,7 @@ structures:
             MERGE (t:_ {id: {target}})
             ON CREATE SET t :_:_VACANT
             WITH s,t
-            MERGE (s)-[e:_ {id: {id}}]->(t)
+            MERGE (s)-[e:«type» {id: {id}}]->(t)
             SET e = {doc},
                e.created = timestamp(),
                e.id = {id}
@@ -83,7 +83,7 @@ structures:
             - |   ( )-->(*)    =>    ( )-->(*)
             - |   (*)-->(*)    =>    (*)-->(*)
          cypher: |
-            MATCH (s)-[e:_ {id: {id}}]-(t)
+            MATCH (s)-[e:«type» {id: {id}}]-(t)
             WITH e, coalesce(e.counter, 0) + 1 AS c
             SET e = {doc},
                 e.accessTime = timestamp(),
@@ -114,7 +114,7 @@ structures:
             - | --( )-->(*)    =>  --( )   (*)
             - | --(*)-->(*)    =>  --(*)   (*)
          cypher: |
-            MATCH (s)-[e:_ {id: {id}}]-(t)
+            MATCH (s)-[e:«type» {id: {id}}]-(t)
                DELETE e
             WITH s.id AS source, t.id AS target
             OPTIONAL MATCH (n:_:_VACANT)
@@ -130,13 +130,13 @@ queries:
          		RETURN x AS n
          UNION
          	MATCH (x:_ {id: {id}})
-         	MATCH (x)-[:_*]->(y)
+         	MATCH (x)-[*1..8]->(y)
          	RETURN DISTINCT y AS n
 
    clean:
-      description: Return all managed nodes and edges
+      description: Remove all managed nodes and all (including unmanaged) edges between them
       cypher: |
-         OPTIONAL MATCH ()-[e:_]-()
+         OPTIONAL MATCH (:_)-[e]-(:_)
          	DELETE e
          	RETURN DISTINCT true AS success
          UNION
