@@ -45,7 +45,3 @@ exports.structure = function(structure, action, params)
 	// return promise
 	return cypher({params: params, query: q});
 }
-
-// .structure('node','add', {type: 'pit', id: 'id-1'});
-// .structure('edge','add', {type: 'same-as', s: 'id-1', t: 'id-1'});
-// .query('klont', {id: 'id-1'});
