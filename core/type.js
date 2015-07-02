@@ -35,7 +35,6 @@ var Type = function (s)
 }
 
 Type.prototype.identifier = function(input) {
-	console.log("ADSF", this.opts);
 	if(this.opts.identifier)
 		return this.opts.identifier(input);
 
