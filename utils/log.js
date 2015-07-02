@@ -16,15 +16,17 @@ exports.pp = pp;
 var arrow = c.gray('=>');
 var twidle = c.gray('~')
 
+var log = (argv.stfu && function() {}) || console.log.bind(console);
+
 var log2 = function(a,b){
-	console.log(a,arrow,b,'\n');
+	log(a,arrow,b,'\n');
 }
 var log3 = function(a,b,c){
-	console.log(a,twidle,b,arrow,c,'\n');
+	log(a,twidle,b,arrow,c,'\n');
 }
 
 var log4 = function(a,b,c,d){
-	console.log(a,twidle,b,arrow,'\n',c,'\nparams:',d,'\n');
+	log(a,twidle,b,arrow,'\n',c,'\nparams:',d,'\n');
 }
 
 var logObj = R.curry(function(color, thing, json) {
