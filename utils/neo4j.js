@@ -1,10 +1,12 @@
+var argv = require('minimist')(process.argv.slice(2));
+
 var u = require('util')
 var fs = require('fs')
 var Q = require('kew')
 
 var c = require('./config').Neo4J
 
-var N = 100; // batch size
+var N = (argv.batchSize || 100);
 
 var batchCommit = require('../utils/neo4batch');
 
