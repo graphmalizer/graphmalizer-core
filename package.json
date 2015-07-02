@@ -11,6 +11,7 @@
   "dependencies": {
     "chalk": "^1.0.0",
     "highland": "^2.5.1",
+    "histograph-uri-normalizer": "git://github.com/histograph/uri-normalizer.git",
     "kew": "^0.6.0",
     "mach": "^1.3.8",
     "minimist": "^1.1.1",
@@ -18,6 +19,7 @@
     "prettyjson": "^1.1.2",
     "prttty": "^0.9.1",
     "ramda": "^0.14.0",
+    "redis": "^0.12.1",
     "yamljs": "^0.2.3"
   },
   "devDependencies": {
