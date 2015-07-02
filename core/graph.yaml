@@ -6,7 +6,7 @@ structures:
             - | ( ) => (*)
             - | (*) => 500
          cypher: |
-            MERGE (n:_:_VACANT {id: {id}})
+            MERGE (n:_:_VACANT:«type» {id: {id}})
             ON CREATE
                SET n = {doc},
                   n.created = timestamp(),
