@@ -14,6 +14,8 @@ var loopRedis = function loopRedis(mkPromise)
 			.then(function(){
 				// loop
 				process.nextTick(loopRedis.bind(null, mkPromise));
+			}, function(err){
+				console.error(err);
 			});
 	});
 }
