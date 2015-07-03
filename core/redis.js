@@ -13,7 +13,7 @@ var loopRedis = function loopRedis(mkPromise)
 		return mkPromise(d)
 			.then(function(){
 				// loop
-				process.nextTick(exports.loopRedis.bind(null, mkPromise));
+				process.nextTick(loopRedis.bind(null, mkPromise));
 			});
 	});
 }
