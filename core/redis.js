@@ -6,12 +6,35 @@ var Redis = require('redis');
 var redis_client = Redis.createClient();
 var queueName = argv.q || argv.queue || 'histograph-queue';
 
+var i = 0;
+
+var time = function(){
+	var t = process.hrtime();
+	var ns = (t[0] * 1e9 + t[1]);
+	return ns / 1e9;
+}
+
+var t0 = time()
+
 var loopRedis = function loopRedis(mkPromise)
 {
 	redis_client.blpop(queueName, 0, function(err,data) {
 		var d = JSON.parse(data[1]);
 		return mkPromise(d)
-			.then(function(){
+			.then(function(response){
+				i += 1;
+				try
+				{
+					// output
+					var r = response.result;
+					var per_sec = (argv.batchSize / (r.duration_ms / 1000)).toFixed(2);
+					var errs = (r.errors && r.errors.length) || 0;
+					var elapsed = time() - t0;
+					var agg_rate = (i/elapsed).toFixed(2);
+					console.log("Rate / Errors / Count / Agg. Rate:\t", per_sec,'\t',errs,'\t',i, '\t', agg_rate);
+				} catch (e) {
+				}
+
 				// loop
 				process.nextTick(loopRedis.bind(null, mkPromise));
 			}, function(err){
