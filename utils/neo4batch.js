@@ -37,7 +37,7 @@ module.exports = function batchCommit(queries, callback){
 
 		res.on('end', function() {
 			// parse accumulated response
-			var resp = JSON.parse(result);
+			var resp = {};//JSON.parse(result);
 
 			// convert nanoseconds to milliseconds
 			resp.duration_ms = (ns_time() - t0) / 1e6;
