@@ -1,9 +1,39 @@
-// HTTP frontend
-var R = require('ramda');
-var Q = require('kew');
+var argv = require('minimist')(process.argv.slice(2));
 var log = require('../utils/log');
 
-// any string is converted to URI
+// create a promise for each message on redis queue
+var Redis = require('redis');
+var redis_client = Redis.createClient();
+var queueName = argv.q || argv.queue || 'histograph-queue';
+
+var loopRedis = function loopRedis(mkPromise)
+{
+	redis_client.blpop(queueName, 0, function(err,data) {
+		var d = JSON.parse(data[1]);
+		return mkPromise(d)
+			.then(function(){
+				// loop
+				process.nextTick(exports.loopRedis.bind(null, mkPromise));
+			});
+	});
+}
+
+// when passed an object, every fail that contains an object
+// is converted into a JSON-string
+var stringifyObjectFields = function(obj){
+	// convert objects to JSONified strings
+  var d = JSON.parse(JSON.stringify(obj));
+	if(typeof(d) === 'object')
+		Object.keys(d).forEach(function(k){
+				var v = d[k];
+				if(typeof(v) === 'object')
+					d[k] = JSON.stringify(v);
+			});
+
+	return d;
+}
+
+// normalize identifiers
 var normalizeIdentifiers = require('histograph-uri-normalizer').normalize;
 
 function toGraphmalizer(msg, flip)
@@ -37,7 +67,6 @@ function toGraphmalizer(msg, flip)
 }
 
 var r = require('./resources');
-var u = require('./slurper');
 
 // 	add: r.modifyDocument('add'),
 // 	update: r.modifyDocument('update'),
@@ -45,12 +74,12 @@ var u = require('./slurper');
 // 	queries: r.queries,
 // 	query: r.query
 
-u.loopRedis(function(msg){
+loopRedis(function(msg){
 
 	var conn_mock = toGraphmalizer(msg, false);
 
 	// convert objects into strings (Neo4J cannot object)
-	var doc = (msg.data && u.stringifyObjectFields(msg.data)) || {}
+	var doc = (msg.data && stringifyObjectFields(msg.data)) || {}
 	conn_mock.params.doc = doc;
 
 	var op = {add: "add", delete: "remove", update: "update"}[msg.action]
@@ -70,12 +99,5 @@ u.loopRedis(function(msg){
 	}
 
 	return p;
-
-	// // index into elasticsearch
-	// return p.then(function(){
-	// 		// put unprocessed document
-	// 		x.doc = msg.data || {}
-	// 		return u.putElastic(x);
-	// 	})
 });
 
