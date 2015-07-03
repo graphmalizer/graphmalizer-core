@@ -27,8 +27,8 @@ module.exports = function batchCommit(queries, callback){
 	var result = '';
 
 	var req = http.request(opts, function(res){
-	   console.log('STATUS: ' + res.statusCode);
-	   console.log('HEADERS: ' + JSON.stringify(res.headers));
+	   // console.log('STATUS: ' + res.statusCode);
+	   // console.log('HEADERS: ' + JSON.stringify(res.headers));
 	   res.setEncoding('utf8');
 
 	   res.on('data', function (chunk) {
