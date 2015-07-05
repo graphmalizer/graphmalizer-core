@@ -77,7 +77,9 @@ specify config file using
 Some related things,
 
 - csv import https://github.com/jexp/neo4j-shell-tools
+- another importer https://github.com/jexp/neo4j-dataset-import
 - streaming cypher plugin https://github.com/neo4j-contrib/streaming-cypher
 - define fixed cypher endpoints https://github.com/jexp/cypher-rs
 - run cypher queries inside gremlin
   [code](https://github.com/scholrly/neo4django/blob/master/neo4django/gremlin/library.groovy#L19)
+
