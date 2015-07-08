@@ -1,4 +1,28 @@
 structures:
+   equivalence:
+      add:
+         cypher: |
+            MERGE (s:_ {id: {source}})
+            ON CREATE SET s :_:_VACANT
+            MERGE (t:_ {id: {target}})
+            ON CREATE SET t :_:_VACANT
+            WITH s,t
+            MERGE (s)<-[:`=`]-(eq:_:`=`:«type»)
+            MERGE (eq)-[:`=`]->(t)
+            RETURN eq
+      remove:
+         cypher: |
+            MATCH (s:_ {id: {source}})
+            MATCH (t:_ {id: {target}})
+            MATCH (s) <-[a:`=`]- (eq:`=`) -[b:`=`]-> (t)
+            WITH a, b, eq, length( (eq)--() ) AS deg
+            UNWIND
+              CASE
+                WHEN deg = 2 THEN [a, b, eq]
+                WHEN deg > 2 THEN [a]
+              END AS x
+              DELETE x
+            RETURN deg
    node:
       add:
          ruleset:
