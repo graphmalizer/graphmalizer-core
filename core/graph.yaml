@@ -144,7 +144,7 @@ queries:
          OPTIONAL MATCH (:_)-[e]-(:_)
          	WITH DISTINCT e AS edge
          	DELETE edge
-         	RETURN true AS success
+         	RETURN DISTINCT true AS success
          UNION
          OPTIONAL MATCH (n:_)
          	WITH DISTINCT n AS node
