@@ -2,27 +2,100 @@ structures:
    equivalence:
       add:
          cypher: |
+            // find s, t nodes
             MERGE (s:_ {id: {source}})
             ON CREATE SET s :_:_VACANT
             MERGE (t:_ {id: {target}})
             ON CREATE SET t :_:_VACANT
             WITH s,t
-            MERGE (s)<-[:`=`]-(eq:_:`=`:«type»)
-            MERGE (eq)-[:`=`]->(t)
-            RETURN eq
+
+            // remove all equivalence class nodes
+            OPTIONAL MATCH (s) <-[:`=`]- (se:`=`)
+            OPTIONAL MATCH (t) <-[:`=`]- (te:`=`)
+            OPTIONAL MATCH () <-[x:`=`]- (se)
+            OPTIONAL MATCH () <-[y:`=`]- (te)
+            WITH s, t, se, te,
+                 collect(DISTINCT x) AS a1,
+                 collect(DISTINCT y) AS a2
+
+            FOREACH (a IN a1 | DELETE a)
+            FOREACH (a IN a2 | DELETE a)
+
+            DELETE se
+            DELETE te
+
+            WITH s, t
+
+            // create equivalence class node
+            MERGE (s) <-[:`=`]- (eq:`=`) -[:`=`]-> (t)
+
+            // create relation node
+            MERGE (s) -[:«type»]-> (r:_:_Rel {id: {id}}) -[:«type»]-> (t)
+
+            // find all nodes reachable under the euivalence relation
+            WITH s, t, r, eq
+            MATCH (s) -[:«type» * 0 .. 12]- (n:_)
+            WHERE NOT n:_Rel // skip the relation nodes
+                  AND n <> s // don't include s, already have arc
+                  AND n <> t // don't include t, already have arc
+
+            WITH s, t, r, eq, collect(DISTINCT n) AS members
+            FOREACH (m IN members | 
+              CREATE (eq) -[:`=`]-> (m) )
+
+            RETURN s, t, r, eq
       remove:
          cypher: |
-            MATCH (s:_ {id: {source}})
-            MATCH (t:_ {id: {target}})
-            MATCH (s) <-[a:`=`]- (eq:`=`) -[b:`=`]-> (t)
-            WITH a, b, eq, length( (eq)--() ) AS deg
-            UNWIND
-              CASE
-                WHEN deg = 2 THEN [a, b, eq]
-                WHEN deg > 2 THEN [a]
-              END AS x
-              DELETE x
-            RETURN deg
+            // find s, t nodes
+            MATCH (r:_:_Rel {id: {id}})
+            MATCH (s) -[x:«type»]-> (r) -[y:«type»]-> (t)
+            DELETE x, y, r
+
+            WITH s, t
+
+            // remove all equivalence class nodes
+            OPTIONAL MATCH (s) <-[:`=`]- (se:`=`)
+            OPTIONAL MATCH (t) <-[:`=`]- (te:`=`)
+            OPTIONAL MATCH () <-[x:`=`]- (se)
+            OPTIONAL MATCH () <-[y:`=`]- (te)
+            WITH s, t, se, te,
+                 collect(DISTINCT x) AS a1,
+                 collect(DISTINCT y) AS a2
+
+            FOREACH (a IN a1 | DELETE a)
+            FOREACH (a IN a2 | DELETE a)
+
+            DELETE se
+            DELETE te
+
+            WITH s, t
+
+            // create equivalence class nodes for s and t
+            MERGE (s) <-[:`=`]- (s_ec:`=`)
+            MERGE (t) <-[:`=`]- (t_ec:`=`)
+
+            WITH s, t, s_ec, t_ec
+
+            // find all nodes reachable from s under the euivalence relation
+            MATCH (s) -[:«type» * 0 .. 12]- (n:_)
+            WHERE NOT n:_Rel // skip the relation nodes
+                  AND n <> s // don't include s, already have arc
+
+            MATCH (t) -[:«type» * 0 .. 12]- (m:_)
+            WHERE NOT m:_Rel // skip the relation nodes
+                  AND m <> t // don't include s, already have arc
+
+            WITH s, t, s_ec, t_ec,
+                 collect(DISTINCT n) AS s_members,
+                 collect(DISTINCT m) AS t_members
+
+            FOREACH (n IN s_members | 
+              CREATE (s_ec) -[:`=`]-> (n) )
+
+            FOREACH (n IN t_members | 
+              CREATE (t_ec) -[:`=`]-> (n) )
+
+            RETURN s, t, s_ec, t_ec
    node:
       add:
          ruleset:
