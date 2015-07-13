@@ -20,6 +20,14 @@ var defaultOptions = {
 
 			return input.id || hashOf([input.source,input.type,input.target]);
 		}
+	},
+	equivalence: {
+		identifier: function(input){
+			if(!input.id && (!input.source || !input.target || !input.type))
+				throw new Error(u.format("Equivalence '%s' requires id or source, target", input.type));
+
+			return input.id || hashOf([input.source,input.type,input.target]);
+		}
 	}
 }
 
