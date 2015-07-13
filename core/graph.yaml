@@ -254,12 +254,17 @@ queries:
    clean:
       description: Remove all managed nodes and all (including unmanaged) edges between them
       cypher: |
-         OPTIONAL MATCH (:_)-[e]-(:_)
+         OPTIONAL MATCH (:_)-[e]-()
          	WITH DISTINCT e AS edge
          	DELETE edge
          	RETURN DISTINCT true AS success
          UNION
          OPTIONAL MATCH (n:_)
          	WITH DISTINCT n AS node
+         	DELETE node
+         	RETURN DISTINCT true AS success
+         UNION
+         OPTIONAL MATCH (e:`=`)
+         	WITH DISTINCT e AS node
          	DELETE node
          	RETURN DISTINCT true AS success
