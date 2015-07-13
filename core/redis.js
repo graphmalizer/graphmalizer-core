@@ -38,6 +38,14 @@ var loopRedis = function loopRedis(mkPromise)
 {
 	redis_client.blpop(queueName, 0, function(err,data) {
 		var d = JSON.parse(data[1]);
+
+		// dont operate on anything but specified type (`--onlyType`)
+		if(argv.onlyType && (d.data && (d.data.type !== argv.onlyType)))
+		{
+			process.nextTick(loopRedis.bind(null, mkPromise));
+			return;
+		}
+
 		return mkPromise(d)
 			.then(function(response){
 				i += 1;
@@ -56,8 +64,10 @@ var loopRedis = function loopRedis(mkPromise)
 				} catch (e) {
 				}
 
-				// loop
-				process.nextTick(loopRedis.bind(null, mkPromise));
+				// loop (or finish)
+				if(!argv.once)
+					process.nextTick(loopRedis.bind(null, mkPromise));
+
 			}, function(err){
 				console.error(err);
 			});
