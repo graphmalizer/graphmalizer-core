@@ -32,6 +32,8 @@ var time = function(){
 
 var t0 = time()
 
+var pp = require('prettyjson')
+
 var loopRedis = function loopRedis(mkPromise)
 {
 	redis_client.blpop(queueName, 0, function(err,data) {
@@ -41,6 +43,9 @@ var loopRedis = function loopRedis(mkPromise)
 				i += 1;
 				try
 				{
+					if((argv.once) || (argv.debug))
+						console.log(pp.render(response.result))
+
 					// output
 					var r = response.result;
 					var per_sec = (argv.batchSize / (r.duration_ms / 1000)).toFixed(2);
