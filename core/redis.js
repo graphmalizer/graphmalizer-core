@@ -108,12 +108,6 @@ function toGraphmalizer(msg, flip)
 }
 
 var r = require('./resources');
-
-// 	add: r.modifyDocument('add'),
-// 	update: r.modifyDocument('update'),
-// 	remove: r.modifyDocument('remove'),
-// 	queries: r.queries,
-// 	query: r.query
 var E = new Elastic({host: 'localhost:9200'});
 
 loopRedis(function(msg){
