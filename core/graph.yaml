@@ -35,7 +35,7 @@ structures:
 
             // find all nodes reachable under the euivalence relation
             WITH s, t, r, eq
-            MATCH (s) -[:«type» * 0 .. 12]- (n:_)
+            OPTIONAL MATCH (s) -[:«type» * 0 .. 12]- (n:_)
             WHERE NOT n:_Rel // skip the relation nodes
                   AND n <> s // don't include s, already have arc
                   AND n <> t // don't include t, already have arc
@@ -43,6 +43,8 @@ structures:
             WITH s, t, r, eq, collect(DISTINCT n) AS members
             FOREACH (m IN members | 
               CREATE (eq) -[:`=`]-> (m) )
+
+            SET eq.size = length(members) + 2
 
             RETURN s, t, r, eq
       remove:
@@ -78,15 +80,15 @@ structures:
             WITH s, t, s_ec, t_ec
 
             // find all nodes reachable from s under the euivalence relation
-            MATCH (s) -[:«type» * 0 .. 12]- (n:_)
+            OPTIONAL MATCH (s) -[:«type» * 0 .. 12]- (n:_)
             WHERE NOT n:_Rel // skip the relation nodes
                   AND n <> s // don't include s, already have arc
 
-            MATCH (t) -[:«type» * 0 .. 12]- (m:_)
+            OPTIONAL MATCH (t) -[:«type» * 0 .. 12]- (m:_)
             WHERE NOT m:_Rel // skip the relation nodes
                   AND m <> t // don't include s, already have arc
 
-            WITH s, t, s_ec, t_ec,
+            WITH s, t, s_ec, t_ec, s_size
                  collect(DISTINCT n) AS s_members,
                  collect(DISTINCT m) AS t_members
 
@@ -95,6 +97,9 @@ structures:
 
             FOREACH (n IN t_members | 
               CREATE (t_ec) -[:`=`]-> (n) )
+
+            SET s_eq.size = length(s_members) + 2
+            SET t_eq.size = length(t_members) + 2
 
             RETURN s, t, s_ec, t_ec
    node:
