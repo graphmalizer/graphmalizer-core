@@ -121,12 +121,15 @@ loopRedis(function(msg){
 	var op = {add: "add", delete: "remove", update: "update"}[msg.action]
 	var p = r.modifyDocument(op)(conn_mock);
 	
-	p = p.then(function(result){
+	p = p.then(function(neo_result){
 		return E[op]({
 			index: conn_mock.params.dataset,
 			type: conn_mock.params.type,
 			id: conn_mock.params.id,
 			body: msg.data
+		}).then(function(){
+			// after indexing into ES, we return the neo result
+			return neo_result;
 		});
 	});
 
