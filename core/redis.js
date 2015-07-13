@@ -127,19 +127,16 @@ loopRedis(function(msg){
 	var p = r.modifyDocument(op)(conn_mock);
 
 	p = p.then(function(neo_result){
-
-    // Add sourceid/dataset
-    // TODO: change sourceid to dataset - here and everywhere
-    var data = msg.data;
-    data.sourceid = msg.sourceid;
-
 		return E[op]({
 			index: conn_mock.params.dataset,
 			type: conn_mock.params.type,
 			id: conn_mock.params.id,
-			body: data
+			body: msg.data || {}
 		}).then(function(){
 			// after indexing into ES, we return the neo result
+			return neo_result;
+		}, function err(err){
+			console.error(err);
 			return neo_result;
 		});
 	});
