@@ -31,6 +31,7 @@ structures:
 
             // create relation node
             MERGE (s) -[:«type»]-> (r:_:_Rel {id: {id}}) -[:«type»]-> (t)
+            SET r.dataset = {dataset}
 
             // find all nodes reachable under the euivalence relation
             WITH s, t, r, eq
@@ -108,11 +109,13 @@ structures:
                SET n = {doc},
                   n.created = timestamp(),
                   n.id = {id}
+                  n.dataset = {dataset}
             ON MATCH
                SET n = {doc},
                    n.accessTime = timestamp(),
                   n.counter = coalesce(n.counter, 0) + 1,
                   n.id = {id}
+                  n.dataset = {dataset}
                REMOVE n:_VACANT
             RETURN n
       update:
@@ -125,8 +128,9 @@ structures:
             WITH n, coalesce(n.counter, 0) + 1 AS c
             SET n = {doc},
                 n.accessTime = timestamp(),
-               n.counter = c,
-               n.id = {id}
+                n.counter = c,
+                n.id = {id}
+                n.dataset = {dataset}
             RETURN n
       remove:
          ruleset:
@@ -167,6 +171,7 @@ structures:
             SET r = {doc},
                 r.created = timestamp(),
                 r.id = {id}
+                r.dataset = {dataset}
             RETURN *
       update:
          ruleset:
@@ -184,8 +189,9 @@ structures:
             WITH r, coalesce(r.counter, 0) + 1 AS c
             SET r = {doc},
                 r.accessTime = timestamp(),
-               r.counter = c,
-               r.id = {id}
+                r.counter = c,
+                r.id = {id}
+                r.dataset = {dataset}
             RETURN r
       remove:
          ruleset:
