@@ -1,6 +1,22 @@
 var argv = require('minimist')(process.argv.slice(2));
 var log = require('../utils/log');
 
+var ES = new require('elasticsearch');
+
+var Elastic = function(opts){
+	var c = ES.Client(opts);
+
+	// calling c.fn without 2nd argument yields a promise
+	var index = c.index.bind(c);
+	var remove = c.delete.bind(c);
+	
+	return {
+		add: index,
+		update: index,
+		remove: remove
+	};
+}
+
 // create a promise for each message on redis queue
 var Redis = require('redis');
 var redis_client = Redis.createClient();
@@ -92,6 +108,7 @@ function toGraphmalizer(msg, flip)
 }
 
 var r = require('./resources');
+var E = new Elastic('localhost:9200');
 
 // 	add: r.modifyDocument('add'),
 // 	update: r.modifyDocument('update'),
@@ -109,19 +126,15 @@ loopRedis(function(msg){
 
 	var op = {add: "add", delete: "remove", update: "update"}[msg.action]
 	var p = r.modifyDocument(op)(conn_mock);
-	// console.log(p)
 	
-	// add opposite edge as well
-	if(msg.type === 'hg:sameHgConcept')
-	{
-		// add flipped edge, a <- b
-		p = p.then(function(){
-			console.log('BIDIR')
-			var m2 = toGraphmalizer(msg, true);
-			m2.params.doc = doc;
-			return r.modifyDocument(op)(m2);
+	p = p.then(function(result){
+		return E[op]({
+			index: conn_mock.params.dataset,
+			type: conn_mock.params.type,
+			id: conn_mock.params.id,
+			body: msg.data
 		});
-	}
+	});
 
 	return p;
 });
