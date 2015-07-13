@@ -1,8 +1,5 @@
 {
   "types": {
-    "g:equiv": {
-      "equivalence": {}
-    },
     "hg:Address": {
       "node": {}
     },
@@ -64,7 +61,7 @@
       "node": {}
     },
     "hg:sameHgConcept": {
-      "edge": {}
+      "equivalence": {}
     },
     "hg:containsHgConcept": {
       "edge": {}
