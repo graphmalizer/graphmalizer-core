@@ -113,13 +113,13 @@ structures:
             ON CREATE
                SET n = {doc},
                   n.created = timestamp(),
-                  n.id = {id}
+                  n.id = {id},
                   n.dataset = {dataset}
             ON MATCH
                SET n = {doc},
                    n.accessTime = timestamp(),
                   n.counter = coalesce(n.counter, 0) + 1,
-                  n.id = {id}
+                  n.id = {id},
                   n.dataset = {dataset}
                REMOVE n:_VACANT
             RETURN n
@@ -134,7 +134,7 @@ structures:
             SET n = {doc},
                 n.accessTime = timestamp(),
                 n.counter = c,
-                n.id = {id}
+                n.id = {id},
                 n.dataset = {dataset}
             RETURN n
       remove:
@@ -149,6 +149,7 @@ structures:
                SET n:_VACANT
                SET n={}
                SET n.id = {id}
+               SET n.dataset = {dataset}
             UNION ALL
             OPTIONAL MATCH (n:_:_VACANT {id: {id}})
             WHERE length( (n)--() ) = 0
@@ -175,7 +176,7 @@ structures:
             MERGE (s)-[:«type»]->(r:_:_Rel {id: {id}})-[:«type»]->(t)
             SET r = {doc},
                 r.created = timestamp(),
-                r.id = {id}
+                r.id = {id},
                 r.dataset = {dataset}
             RETURN *
       update:
@@ -195,7 +196,7 @@ structures:
             SET r = {doc},
                 r.accessTime = timestamp(),
                 r.counter = c,
-                r.id = {id}
+                r.id = {id},
                 r.dataset = {dataset}
             RETURN r
       remove:
