@@ -21,8 +21,7 @@ structures:
             FOREACH (a IN a1 | DELETE a)
             FOREACH (a IN a2 | DELETE a)
 
-            DELETE se
-            DELETE te
+            DELETE se, te
 
             WITH s, t
 
