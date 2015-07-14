@@ -1,4 +1,3 @@
-var R = require('ramda');
 var Cached = require('../utils/cache');
 
 var Dataset = function (s){
