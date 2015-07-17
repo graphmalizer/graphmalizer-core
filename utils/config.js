@@ -6,9 +6,7 @@ var R = require('ramda');
 var system = {
 	Neo4J: {
 		host: 'localhost',
-		port: 7474,
-		username: 'neo4j',
-		password: 'waag'
+		port: 7474
 	},
 
 	// behave like a graph with equivalences
