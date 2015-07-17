@@ -67,7 +67,7 @@ equivalence:
             // extract the labels on q and filter non-matching
             WITH head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb,
                s, t, r, eq, n, q, eq2
-            WHERE NOT eq2 IS NULL 
+            WHERE NOT eq2 IS NULL
                
             // create arc between equivalence classes 
             MERGE eq <-[:`=R` {label: lb}]- eq2
@@ -75,30 +75,29 @@ equivalence:
          RETURN DISTINCT s, t, r, eq
    remove:
       cypher: |
-         // find s, t nodes
+         // find relation node
          MATCH (r:_:_Rel {id: {id}})
+         
+         // find source, target nodes
          MATCH (s) -[x:«type»]-> (r) -[y:«type»]-> (t)
+         
+         // remove the relation
          DELETE x, y, r
 
+         // ok, wipe the old ECR
          WITH s, t
-
-         // remove all equivalence class nodes
+         
+         // find & wipe the arcs
          OPTIONAL MATCH (s) <-[:`=`]- (se:`=`)
-         OPTIONAL MATCH (t) <-[:`=`]- (te:`=`)
-         OPTIONAL MATCH () <-[x:`=`]- (se)
-         OPTIONAL MATCH () <-[y:`=`]- (te)
+         OPTIONAL MATCH (se) -[a]- ()
+         DELETE a
 
-         WITH s, t, se, te,
-              collect(DISTINCT x) AS a1,
-              collect(DISTINCT y) AS a2
-
-         FOREACH (a IN a1 | DELETE a)
-         FOREACH (a IN a2 | DELETE a)
-
+         // wipe the ECRs
+         WITH s, t, se
          DELETE se
-         DELETE te
 
-         WITH s, t
+         // ensure that at this point we have only one row
+         WITH DISTINCT s, t
 
          // create equivalence class nodes for s and t
          MERGE (s) <-[:`=`]- (s_ec:`=`)
@@ -106,27 +105,68 @@ equivalence:
 
          WITH s, t, s_ec, t_ec
 
-         // find all nodes reachable from s under the euivalence relation
-         OPTIONAL MATCH (s) -[:«type» * 0 .. 12]- (n:_)
-         WHERE NOT n:_Rel // skip the relation nodes
-               AND n <> s // don't include s, already have arc
+            // find all nodes reachable under the equivalence relation
+            OPTIONAL MATCH (s) -[:«type» * 0 ..]- (n:_)
+            WHERE NOT n:_Rel // skip the relation nodes
+   
+            // link to new equivalence class representative
+            MERGE n <-[:`=`]- s_eq
 
-         OPTIONAL MATCH (t) -[:«type» * 0 .. 12]- (m:_)
-         WHERE NOT m:_Rel // skip the relation nodes
-               AND m <> t // don't include s, already have arc
+         // collect all s-members
+         WITH s, t, s_ec, t_ec,
+         collect(DISTINCT n) AS s_members
 
-         WITH s, t, s_ec, t_ec, s_size
-              collect(DISTINCT n) AS s_members,
-              collect(DISTINCT m) AS t_members
+               OPTIONAL MATCH (t) -[:«type» * 0 ..]- (n:_)
+               WHERE NOT n:_Rel // skip the relation nodes
+      
+               // link to new equivalence class representative
+               MERGE n <-[:`=`]- t_eq
 
-         FOREACH (n IN s_members | 
-           CREATE (s_ec) -[:`=`]-> (n) )
+         // collect all t-members
+         WITH s, t, s_ec, t_ec, s_members,
+         collect(DISTINCT n) AS t_members
 
-         FOREACH (n IN t_members | 
-           CREATE (t_ec) -[:`=`]-> (n) )
+            // find ECRs related (outward) to these nodes `n`
+            UNWIND s_members AS n
+               OPTIONAL MATCH n -->(q:_Rel)--> () <-[:`=`]- (eq_out:`=`)
+               WHERE s_ec <> eq_out
+      
+               // extract the labels on q and filter non-matching
+               WITH s, t, s_ec, t_ec, s_members, t_members, eq_out,
+               head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb
+                  
+               WHERE NOT eq_out IS NULL 
+      
+               // create arc between equivalence classes 
+               MERGE s_ec -[:`=R` {label: lb}]-> eq_out
+   
+         // collect all outward ECRs
+         WITH s, t, s_ec, t_ec, s_members, t_members,
+         collect(DISTINCT eq_out) AS s_out
+         
+            // find ECRs related (inward) to these nodes `n`
+            UNWIND s_members AS n
+               OPTIONAL MATCH n <--(q:_Rel)<-- () <-[:`=`]- (eq_in:`=`)
+                  WHERE s_ec <> eq_in
+      
+               // extract the labels on q and filter non-matching
+               WITH s, t, s_ec, t_ec, s_members, t_members, s_out,
+               head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb
+               WHERE NOT eq_in IS NULL 
+                  
+               // create arc between equivalence classes 
+               MERGE s_ec <-[:`=R` {label: lb}]- eq_in
 
-         SET s_eq.size = length(s_members) + 2
-         SET t_eq.size = length(t_members) + 2
+         // collect all inward ECRs
+         WITH s, t, s_ec, t_ec, s_members, t_members, s_out,
+         collect(DISTINCT eq_in) AS s_in
+
+         SET s_ec.size = length(s_members)
+         SET t_ec.size = length(t_members)
+         SET s_ec.inDegree = length(s_in)
+#         SET t_ec.inDegree = length(t_in)
+         SET s_ec.outDegree = length (s_out)
+#         SET t_ec.outDegree = length (t_out)
 
          RETURN s, t, s_ec, t_ec
 node:
