@@ -11,16 +11,19 @@ var system = {
 		password: 'waag'
 	},
 
-	// behave like a graph
+	// behave like a graph with equivalences
 	types: {
 		"node": {
 			node: {}
 		},
-		"edge": {
-			edge: {}
+		"arc": {
+			arc: {}
+		},
+		"equivalence": {
+			equivalence: {}
 		}
 	}
-}
+};
 
 // load json from a file and if there, throw parse errors
 function tryLoadJSON(fn){
