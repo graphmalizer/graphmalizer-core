@@ -25,25 +25,37 @@ _(process.stdin)
 	.map(function(o) {
 		// default operation is add
 		o.operation = o.operation || 'add';
+
+		// sourceId is alias for dataset
 		o.dataset = o.sourceId || o.dataset;
+
+		// s, t, from, to alias for source/target
 		o.source = o.from || o.source || o.s;
 		o.target = o.to || o.target || o.t;
 
 		// ensure data field
-		if(!o.data)
-			o.data = {};
+		o.data = o.data || {};
 
+		// if we have a name, copy into data field
 		o.data.name = o.name;
+
+		// lookup structure (based on type)
 		o.structure = Object.keys(conf.types[o.type])[0];
+
+		// strip namespace
 		o.type = o.type.replace(/(^hg:)|[-_,;.]/g,'');
 
 		// make query
 		return Queries.mkQuery(o.structure, o.operation, o);
 	})
+	// batch 'm up, every 1 sec or 2500 items
 	.batchWithTimeOrCount(1000, 2500)
+
+	// run in series and flatten output streams
 	.map(batchCommit)
 	.series()
 	.flatten()
+
 	.each(function(result){
 		//console.log(result);
 		console.log("statusCode:", result.statusCode);
