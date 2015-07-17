@@ -1,0 +1,3 @@
+{"from":"a", "to":"c", "type": "lies-in","dataset":"test"}
+{"from":"b", "to":"c", "type": "lies-in","dataset":"test"}
+{"from":"a", "to":"b", "type": "same-as", "dataset":"test"}
