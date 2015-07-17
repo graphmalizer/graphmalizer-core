@@ -105,68 +105,105 @@ equivalence:
 
          WITH s, t, s_ec, t_ec
 
-            // find all nodes reachable under the equivalence relation
-            OPTIONAL MATCH (s) -[:«type» * 0 ..]- (n:_)
-            WHERE NOT n:_Rel // skip the relation nodes
+         // find all nodes reachable under the equivalence relation
+         // (s) <-- <s_ec> --> (s_members)
+         OPTIONAL MATCH (s) -[:«type» * 0 ..]- (n:_)
+         WHERE NOT n:_Rel // skip the relation nodes
    
-            // link to new equivalence class representative
+            // add arc to new equivalence class representative
             MERGE n <-[:`=`]- s_eq
 
-         // collect all s-members
-         WITH s, t, s_ec, t_ec,
-         collect(DISTINCT n) AS s_members
+            // collect all s-members
+            WITH s, t, s_ec, t_ec,
+            collect(DISTINCT n) AS s_members
 
-               OPTIONAL MATCH (t) -[:«type» * 0 ..]- (n:_)
-               WHERE NOT n:_Rel // skip the relation nodes
-      
-               // link to new equivalence class representative
-               MERGE n <-[:`=`]- t_eq
-
-         // collect all t-members
-         WITH s, t, s_ec, t_ec, s_members,
-         collect(DISTINCT n) AS t_members
-
-            // find ECRs related (outward) to these nodes `n`
-            UNWIND s_members AS n
-               OPTIONAL MATCH n -->(q:_Rel)--> () <-[:`=`]- (eq_out:`=`)
-               WHERE s_ec <> eq_out
-      
-               // extract the labels on q and filter non-matching
-               WITH s, t, s_ec, t_ec, s_members, t_members, eq_out,
-               head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb
-                  
-               WHERE NOT eq_out IS NULL 
-      
-               // create arc between equivalence classes 
-               MERGE s_ec -[:`=R` {label: lb}]-> eq_out
+         // (t) <-- <t_ec> --> (t_members)
+         OPTIONAL MATCH (t) -[:«type» * 0 ..]- (n:_)
+         WHERE NOT n:_Rel // skip the relation nodes
    
-         // collect all outward ECRs
-         WITH s, t, s_ec, t_ec, s_members, t_members,
-         collect(DISTINCT eq_out) AS s_out
-         
-            // find ECRs related (inward) to these nodes `n`
-            UNWIND s_members AS n
-               OPTIONAL MATCH n <--(q:_Rel)<-- () <-[:`=`]- (eq_in:`=`)
-                  WHERE s_ec <> eq_in
-      
-               // extract the labels on q and filter non-matching
-               WITH s, t, s_ec, t_ec, s_members, t_members, s_out,
-               head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb
-               WHERE NOT eq_in IS NULL 
-                  
-               // create arc between equivalence classes 
-               MERGE s_ec <-[:`=R` {label: lb}]- eq_in
+            // add arc to new equivalence class representative
+            MERGE n <-[:`=`]- t_eq
 
-         // collect all inward ECRs
-         WITH s, t, s_ec, t_ec, s_members, t_members, s_out,
-         collect(DISTINCT eq_in) AS s_in
+            // collect all t-members
+            WITH s, t, s_ec, t_ec, s_members,
+            collect(DISTINCT n) AS t_members
+
+         // find (s) ---> <s_out>
+         UNWIND s_members AS n
+            OPTIONAL MATCH n -->(q:_Rel)--> () <-[:`=`]- (eq_out:`=`)
+            WHERE s_ec <> eq_out
+   
+            // extract the labels on q and filter non-matching
+            WITH s, t, s_ec, t_ec, s_members, t_members, eq_out,
+            head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb
+               
+            WHERE NOT eq_out IS NULL 
+   
+            // create arc between equivalence classes 
+            MERGE s_ec -[:`=R` {label: lb}]-> eq_out
+   
+            // collect all outward ECRs
+            WITH s, t, s_ec, t_ec, s_members, t_members,
+            collect(DISTINCT eq_out) AS s_out
+         
+         // find (s) <--- <s_in>
+         UNWIND s_members AS n
+            OPTIONAL MATCH n <--(q:_Rel)<-- () <-[:`=`]- (eq_in:`=`)
+               WHERE s_ec <> eq_in
+   
+            // extract the labels on q and filter non-matching
+            WITH s, t, s_ec, t_ec, s_members, t_members, s_out,
+            head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb
+            WHERE NOT eq_in IS NULL 
+               
+            // create arc between equivalence classes 
+            MERGE s_ec <-[:`=R` {label: lb}]- eq_in
+
+            // collect all inward ECRs
+            WITH s, t, s_ec, t_ec, s_members, t_members, s_out,
+            collect(DISTINCT eq_in) AS s_in
+
+         // find (t) ---> <t_out>
+         UNWIND t_members AS n
+            OPTIONAL MATCH n -->(q:_Rel)--> () <-[:`=`]- (eq_out:`=`)
+            WHERE t_ec <> eq_out
+   
+            // extract the labels on q and filter non-matching
+            WITH s, t, s_ec, t_ec, s_members, t_members, s_out, s_in, eq_out,
+            head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb
+               
+            WHERE NOT eq_out IS NULL 
+   
+            // create arc between equivalence classes 
+            MERGE t_ec -[:`=R` {label: lb}]-> eq_out
+   
+            // collect all outward ECRs
+            WITH s, t, s_ec, t_ec, s_members, t_members, s_out, s_in,
+            collect(DISTINCT eq_out) AS t_out
+         
+         // find (s) <--- <eq_in>
+         UNWIND t_members AS n
+            OPTIONAL MATCH n <--(q:_Rel)<-- () <-[:`=`]- (eq_in:`=`)
+               WHERE t_ec <> eq_in
+   
+            // extract the labels on q and filter non-matching
+            WITH s, t, s_ec, t_ec, s_members, t_members, s_out, s_in, t_out, eq_in,
+            head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb
+            WHERE NOT eq_in IS NULL 
+               
+            // create arc between equivalence classes 
+            MERGE t_ec <-[:`=R` {label: lb}]- eq_in
+
+            // collect all inward ECRs
+            WITH s, t, s_ec, t_ec, s_members, t_members, s_out, s_in, t_out,
+            collect(DISTINCT eq_in) AS t_in
 
          SET s_ec.size = length(s_members)
          SET t_ec.size = length(t_members)
          SET s_ec.inDegree = length(s_in)
-#         SET t_ec.inDegree = length(t_in)
+         SET t_ec.inDegree = length(t_in)
          SET s_ec.outDegree = length (s_out)
-#         SET t_ec.outDegree = length (t_out)
+         SET t_ec.outDegree = length (t_out)
 
          RETURN s, t, s_ec, t_ec
 node:
