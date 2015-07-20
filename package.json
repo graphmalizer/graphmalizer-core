@@ -23,6 +23,7 @@
     "yamljs": "^0.2.3"
   },
   "devDependencies": {
+    "js-combinatorics": "^0.5.0",
     "supertest": "^1.0.1"
   }
 }
