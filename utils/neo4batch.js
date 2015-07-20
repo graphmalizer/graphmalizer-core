@@ -1,3 +1,6 @@
+var argv = require('minimist')(process.argv.slice(2));
+var log = argv.stfu ? function(){} : console.log.bind(console);
+
 var http = require('http');
 
 var opts = {
@@ -37,12 +40,12 @@ module.exports = function batchCommit(statements, callback)
 		res.setEncoding('utf8');
 
 		res.on('data', function (chunk) {
-			console.log("data");
+			log("data");
 			result += chunk;
 		});
 
 		res.on('end', function() {
-			console.log("recv end", result.length);
+			log("recv end", result.length);
 
 			// parse accumulated response
 			var resp = {};
@@ -64,7 +67,7 @@ module.exports = function batchCommit(statements, callback)
 				resp.error = e;
 			}
 
-			console.log("size", resp.result.results.length);
+			log("size", resp.result.results.length);
 
 			// parsing duration
 			var t2 = ns_time();
@@ -76,14 +79,14 @@ module.exports = function batchCommit(statements, callback)
 	});
 
 	req.on('error', function(err) {
-		console.log("RECEIVED error EVENT");
+		log("RECEIVED error EVENT");
 		callback(err, null);
 	});
 
 	// write data to request body
-	console.error("writing");
+	log("writing");
 	req.write(s);
 
-	console.error("send end");
+	log("send end");
 	req.end();
 };
