@@ -7,7 +7,6 @@ var Queries = require('./core/queries');
 var batchCommit = _.wrapCallback(require('./utils/neo4batch'));
 
 var Combinatorics = require('js-combinatorics');
-var shell = require('shelljs');
 
 function mkQuery(s){
 	return [{statement: s, parameters: {}}];
