@@ -63,8 +63,7 @@ _(process.stdin)
 		// strip namespace
 		o.type = o.type.replace(/(^hg:)|[-_,;.]/g,'');
 
-		// make query
-		return Queries.mkQuery(o.structure, o.operation, o);
+		return o;
 	})
 	.collect()
 	.consume(function (err, x, push, next){
@@ -78,14 +77,33 @@ _(process.stdin)
 			push(null, x);
 		}
 		else {
-			// emit all permutations of these messages
-			var permutations = Combinatorics.permutation(x);
-			permutations.forEach(function(permutation){
-				push(null, permutation);
+			// first do all add, then all removes
+			var things = R.groupBy(R.prop('operation'), x);
+
+			// create all permutations of adds and removes separately
+			var perms = R.mapObj(function(xs){
+				return Combinatorics.permutation(xs).toArray()
+			}, things);
+
+			// take product [adds] ++ [removes]
+			var cp = Combinatorics.cartesianProduct(
+				perms['add'] || [],
+				perms['remove'] || []
+			).toArray();
+
+			// for each combination, push out concatenated list again
+			cp.forEach(function(c){
+				push(null, R.concat(c[0], c[1]));
 			});
+
 			next();
 		}
-
+	})
+	.map(function(o){
+		// make query
+		return o.map(function(o){
+			return Queries.mkQuery(o.structure, o.operation, o);
+		});
 	})
 	.map(function(permutation) {
 		// clear, query, enumerate
