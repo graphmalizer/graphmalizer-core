@@ -27,7 +27,7 @@ _(process.stdin)
 		o.operation = o.operation || 'add';
 
 		// sourceId is alias for dataset
-		o.dataset = o.sourceId || o.dataset;
+		o.dataset = o.sourceId || o.dataset || 'stdin';
 
 		// s, t, from, to alias for source/target
 		o.source = o.from || o.source || o.s;
