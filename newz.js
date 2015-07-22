@@ -45,9 +45,17 @@ _(process.stdin)
 
 		// lookup structure (based on type)
 		o.structure = Object.keys(conf.types[o.type])[0];
+
 		// make query
-		return Queries.mkQuery(o.structure, o.operation, o);
+		try{
+			return [Queries.mkQuery(o.structure, o.operation, o)];
+		}
+		catch(e){
+			console.log(e);
+			return []
+		}
 	})
+	.flatten()
 	// batch 'm up, every 1 sec or 2500 items
 	.batchWithTimeOrCount(1000, 2500)
 
