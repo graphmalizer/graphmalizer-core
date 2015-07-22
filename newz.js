@@ -39,12 +39,11 @@ _(process.stdin)
 		// if we have a name, copy into data field
 		o.data.name = o.name;
 
-		// lookup structure (based on type)
-		o.structure = Object.keys(conf.types[o.type])[0];
-
 		// strip namespace
 		o.type = o.type.replace(/(^hg:)|[-_,;.]/g,'');
 
+		// lookup structure (based on type)
+		o.structure = Object.keys(conf.types[o.type])[0];
 		// make query
 		return Queries.mkQuery(o.structure, o.operation, o);
 	})
