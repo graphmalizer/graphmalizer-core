@@ -32,6 +32,7 @@ _(process.stdin)
 		// s, t, from, to alias for source/target
 		o.source = o.from || o.source || o.s;
 		o.target = o.to || o.target || o.t;
+		o.id = o.id || o.hgid || o.uri;
 
 		// ensure data field
 		o.data = o.data || {};
