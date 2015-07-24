@@ -1,85 +1,55 @@
+# Config
 
-some sort of graphmalizer, take sets of documents into elasticsearch and neo.
+You must configure a mapping `type → structure`
 
-see [ABOUT](docs/ABOUT.md)
+```yaml
+neo4j:
+  host: localhost
+  port: 7474
+types:
+  thing: node
+  relation: arc
+  equiv: equivalence
+```
+(in `config.yaml`, `config.json` or `--config [filename.json|filename.yaml]`)
 
-![much looks](docs/da-lookz.png)
+# Input
 
-One adds node and edges willy nilly, graphmalizer will stitch your id's together.
-
-![oh my, a bare edge](docs/singular-edge.png)
-
-adding a node to the source or target idea will update the vacant node:
-
-![atleast one side covered](docs/inhabited-node.png)
-
-the interface is 'document' oriented, you pass a document to `/:dataset/:type(/:id)`.
-And depending on the document *type* you pass `id`, `source` and `target`
-(as parameters).
-
-
-define your types here [`config.json`](config.json)
+Input data elements are of this form
 
 ```js
 {
-	"types": {
-		"PIT": {
-			"node": {}
-		},
-		"LIES_IN": {
-			"edge": {}
-		},
-		"SAME_AS": {
-			"edge": {}
-		},
-		"USED_FOR": {
-			"edge": {}
-		},
-		"ORIGINATED_FROM": {
-			"edge": {}
-		}
-	}
+  dataset: /* string */,
+  type: /* what you defined in config */,
+  operation: /* 'add' or 'remove' */
+
+  // all optional, depends on the structure
+  id: '123',
+  s: '123',
+  t: '123',
+
+  // whatever you want
+  data: { /*...*/ }
 }
 ```
 
-(or pass file path as `--config` or as `GRAPHMALIZER_CONFIG` environment variable)
+# API
 
+One function, input: stream, output: stream.
 
-then you can test the server using HTTPie
+Example code
 
-	pip install httpie
-	node server.js
+```js
+var H = require('highland');
+var graphmalizer = require('graphmalizer-core');
 
-create an edge, automatic id
+var stream = H([ {type: 'thing', id: 'x'} ]);
 
-	http POST :5000/foo/LIES_IN/ source:=1 target:=2 doc:='{"hi":123}'
+graphmalizer(stream)
+  .each(H.log);
+```
 
-create a node
+# Examples
 
-	http POST :5000/foo/PIT/123 doc:='{"some":["prop",123]}'
-
-# running
-
-Development, fish shell
-
-	nodemon -w (echo *.js *.cypher) server.js
-
-### config file
-
-specify config file using
-
-- environment var `GRAPHMALIZER_CONFIG`
-- commandline argument `--config`
-- or by placing `config.json` in the startup directory
-
-### Alternatives / related work
-
-Some related things,
-
-- csv import https://github.com/jexp/neo4j-shell-tools
-- another importer https://github.com/jexp/neo4j-dataset-import
-- streaming cypher plugin https://github.com/neo4j-contrib/streaming-cypher
-- define fixed cypher endpoints https://github.com/jexp/cypher-rs
-- run cypher queries inside gremlin
-  [code](https://github.com/scholrly/neo4django/blob/master/neo4django/gremlin/library.groovy#L19)
+See [`examples/`](examples/)
 
