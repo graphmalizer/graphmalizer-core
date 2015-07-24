@@ -12,15 +12,14 @@
     "email": "bert@waag.org"
   }],
   "dependencies": {
-    "highland": "^2.5.1",
-    "minimist": "^1.1.1",
-    "prttty": "^0.9.1",
-    "ramda": "^0.14.0",
-    "yamljs": "^0.2.3"
+    "highland": "~2.5.0",
+    "minimist": "~1.1.0",
+    "prttty": "~0.9.0",
+    "ramda": "~0.14.0",
+    "yamljs": "~0.2.0"
   },
   "devDependencies": {
-    "js-combinatorics": "^0.5.0",
-    "supertest": "^1.0.1"
+    "js-combinatorics": "~0.5.0"
   },
   "repository": {
     "type": "git",
