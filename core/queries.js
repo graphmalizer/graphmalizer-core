@@ -46,11 +46,11 @@ exports.mkQuery = function(request)
 	// lookup query string and...
 	var cypher_string = qs[structure][operation].cypher;
 
-	// ...string replace all occurances of «key»
-	var s = template(cypher_string, params);
+	// ...string replace all occurances of «type»
+	var s = template(cypher_string, {type: request.type});
 
 	// note ^ this is not a security breach, we assume input has been sanitized
-	// at this point.
+	// at this point. TODO actually we assume, but don't sanitise
 
 	// compute id if missing
 	request.id = identifiers[structure](request);
