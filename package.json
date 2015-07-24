@@ -28,6 +28,7 @@
   "bugs": {
     "url": "https://github.com/graphmalizer/graphmalizer-core/issues"
   },
+  "homepage": "https://graphmalizer.github.io",
   "keywords": [
     "graph",
     "equivalence",
