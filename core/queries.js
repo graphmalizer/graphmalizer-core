@@ -32,8 +32,11 @@ var identifiers = {
 var qs = YAML.parse(fs.readFileSync('./core/queries.yaml', {encoding: 'utf8'}));
 
 // make cypher queries out of structure manipulation request
-exports.mkQuery = function(structure, operation, params)
+exports.mkQuery = function(request)
 {
+	var operation = request.operation;
+	var structure = request.structure;
+
 	if(!qs[structure])
 		throw new Error(u.format('No such structure "%s"', structure));
 
@@ -50,11 +53,11 @@ exports.mkQuery = function(structure, operation, params)
 	// at this point.
 
 	// compute id if missing
-	params.id = identifiers[structure](params);
+	request.id = identifiers[structure](request);
 
 	// return promise
 	return {
-		parameters: params,
+		parameters: request,
 		statement: s
 	};
 };
