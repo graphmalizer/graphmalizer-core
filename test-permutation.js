@@ -1,3 +1,6 @@
+
+// reads requests from stdin and tries out all permutations ensuring that we get the same graph
+
 var R = require('ramda');
 var hashOf = require('./utils/hashOf');
 var _ = require('highland');
