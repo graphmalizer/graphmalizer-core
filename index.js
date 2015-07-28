@@ -1,4 +1,5 @@
 var _ = require('highland');
+var u = require('util');
 var prttty = require('prttty');
 var Queries = require('./core/queries');
 
@@ -67,7 +68,7 @@ function prepare(o)
 	// check if we have defined the type
 	if(! conf.types[o.type])
 	{
-		console.error(u.format('Unknown type "%s", must be one of: %s', o.type, types));
+		console.error(u.format('Unknown type "%s", must be one of: %s', o.type, Object.keys(conf.types)));
 		return []
 	}
 
