@@ -1,5 +1,4 @@
-var argv = require('minimist')(process.argv.slice(2));
-var log = argv.stfu ? function(){} : console.log.bind(console);
+var log = require('./log');
 
 var http = require('http');
 
