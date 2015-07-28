@@ -24,7 +24,7 @@ var output = input.fork()
 var rr = input.fork()
 	.zip(output);
 
-var I = rr.fork().pluck(1).sequence();
+var I = rr.fork().pluck(0).sequence();
 var O = rr.fork().pluck(1).sequence();
 var system = I.zip(O)
 	.map(function(rr){
