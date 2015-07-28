@@ -29,7 +29,8 @@ var identifiers = {
 };
 
 // load queries from file "structure.operation.{ cypher, description }"
-var qs = YAML.parse(fs.readFileSync('./core/queries.yaml', {encoding: 'utf8'}));
+var fn = path.join(__dirname, 'queries.yaml');
+var qs = YAML.parse(fs.readFileSync(fn, {encoding: 'utf8'}));
 
 // make cypher queries out of structure manipulation request
 exports.mkQuery = function(request)
