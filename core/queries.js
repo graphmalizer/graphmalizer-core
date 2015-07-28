@@ -1,5 +1,6 @@
 var u = require('util');
 var fs = require('fs');
+var path = require('path');
 var YAML = require('yamljs');
 
 var hashOf = require('../utils/hashOf');
