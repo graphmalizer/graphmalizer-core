@@ -3,7 +3,7 @@
 
 // usage: echo '{"type":"pit", "id":"a"}' | node stdin.js
 
-var H = require('highland')
+var H = require('highland');
 
 // read NDJSON from standard input
 var stdin = H(process.stdin)
