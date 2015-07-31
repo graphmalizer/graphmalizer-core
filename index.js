@@ -2,6 +2,7 @@ var _ = require('highland');
 var u = require('util');
 var prttty = require('prttty');
 var Queries = require('./core/queries');
+var argv = require('minimist')(process.argv.slice(2));
 
 var conf = require('./utils/config');
 var log = require('./utils/log');
@@ -13,7 +14,7 @@ var streams = _();
 // processing pipeline
 var input = streams.merge()
 	.flatMap(prepare)
-	.batchWithTimeOrCount(1000, 2500);
+	.batchWithTimeOrCount(argv.batchTimeout || 1000, argv.batchSize || 2500);
 
 var output = input.fork()
 	.map(batchCommit) // a -> stream b
