@@ -79,13 +79,10 @@ function Graphmalizer(config)
 	this.inputs = H();
 
 	// merge all inputs, convert to cypher queries and batch up
-	var kk = this.inputs
+	var input = this.inputs
 		.merge()
-		.flatMap(prepare);
-
-	kk.observe(H.log);
-
-	var input =  kk.batchWithTimeOrCount(conf.batchTimeout, conf.batchSize);
+		.flatMap(prepare)
+		.batchWithTimeOrCount(conf.batchTimeout, conf.batchSize);
 
 	// commit batches sequentially
 	var output = input
