@@ -41,11 +41,22 @@ Example code
 
 ```js
 var H = require('highland');
-var graphmalizer = require('graphmalizer-core');
+var Graphmalizer = require('graphmalizer-core');
+
+var config = {
+	Neo4J: { host: 'localhost', port: 7474 },
+	types: {
+		thing: { node:{} },
+		eats: { arc:{} },
+		same: { equivalence: {} }
+	}
+}
+
+var G = new Graphmalizer(config)
 
 var stream = H([ {type: 'thing', id: 'x'} ]);
 
-graphmalizer(stream)
+G.register(stream)
   .each(H.log);
 ```
 
