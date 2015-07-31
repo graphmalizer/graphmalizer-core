@@ -27,7 +27,7 @@ var stdin = H(process.stdin)
 		return JSON.parse(s);
 	});
 
-var graphmalizer = require('./index');
+var Graphmalizer = require('../index');
 
-graphmalizer(stdin)
-	.each(H.log);
+var G = new Graphmalizer();
+G.register(stdin).each(log("OUT"));
