@@ -64,6 +64,9 @@ module.exports = function(options) {
 					// try to parse the result, should be JSON
 					var r = JSON.parse(result);
 
+					if(r.errors)
+						resp.errors = r.errors;
+
 					// convert to more compact JSON representation
 					var rdict = unwrapResult(r);
 
