@@ -45,7 +45,7 @@ module.exports = function(types) {
 			throw new Error(u.format('Unknown type "%s", must be one of: %s', input.type, typeNames));
 
 		// set structure name
-		o.structure = structureNames[input.type]
+		input.structure = structureNames[input.type]
 		
 		// compute id if missing
 		input.id = ensureIdentifier[structure](request);
