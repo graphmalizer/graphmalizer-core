@@ -1,7 +1,7 @@
 var u = require('util');
 var fs = require('fs');
 var path = require('path');
-var YAML = require('yamljs');
+var yaml = require('js-yaml');
 
 var hashOf = require('../utils/hashOf');
 var template = require('../utils/template');
@@ -29,9 +29,10 @@ var identifiers = {
 	equivalence: hashSourceTarget
 };
 
-// load queries from file "structure.operation.{ cypher, description }"
+// load queries from file: structure.operation[cypher, description, rules]
 var fn = path.join(__dirname, 'queries.yaml');
-var qs = YAML.parse(fs.readFileSync(fn, {encoding: 'utf8'}));
+var f = fs.readFileSync(fn, {encoding: 'utf8'});
+var qs = yaml.safeLoad(f, {filename: fn})
 
 // make cypher queries out of structure manipulation request
 exports.mkQuery = function(request)
