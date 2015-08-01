@@ -1,33 +1,10 @@
 var u = require('util');
+
 var fs = require('fs');
 var path = require('path');
 var yaml = require('js-yaml');
 
-var hashOf = require('../utils/hashOf');
 var template = require('../utils/template');
-
-var hashSourceTarget = function(input)
-{
-	if(!input.id && (!input.source || !input.target || !input.type))
-		throw new Error(u.format("Type '%s' requires id or source, target", input.type));
-
-	return input.id || hashOf([input.source,input.type,input.target]);
-};
-
-var requireId = function(input)
-{
-	if(!input.id)
-		throw new Error(u.format("Type '%s' requires an id", input.type));
-
-	return input.id;
-};
-
-// we define how identifiers are created for each structure here
-var identifiers = {
-	node: requireId,
-	arc: hashSourceTarget,
-	equivalence: hashSourceTarget
-};
 
 // load queries from file
 var fn = path.join(__dirname, 'queries.yaml');

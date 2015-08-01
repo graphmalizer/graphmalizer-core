@@ -36,7 +36,8 @@ function Graphmalizer(config)
 	// setup neo4j client
 	var batchCommit = H.wrapCallback(neoBatch(conf.Neo4J));
 
-	var types = Object.keys(conf.types);
+	// setup input checker '~ schema validation'
+	var checkInput = require('./utils/checkInput')(config.types);
 
 	// make query (uses config to determine type ~ structure mapping)
 	function prepare(o)
@@ -54,23 +55,20 @@ function Graphmalizer(config)
 		// ensure (empty) data field
 		o.data = o.data || {};
 
-		// check if we have defined the type
-		if(!conf.types[o.type])
-		{
-			console.error(u.format('Unknown type "%s", must be one of: %s', o.type, types));
-			return []
-		}
-
-		// lookup structure (based on type)
-		o.structure = Object.keys(conf.types[o.type])[0];
-
 		try
 		{
-			return [Queries.mkQuery(o)];
+			var input = checkInput(o);
+			var q = [Queries.mkQuery(input)]
+
+			// we have win!
+			return [q]
 		}
 		catch(err)
 		{
+			// other than spewing, we ignore errors
 			console.error(err.stack);
+
+			// so this request will be flatmapped away
 			return []
 		}
 	}
