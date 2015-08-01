@@ -46,6 +46,9 @@ exports.mkQuery = function(request)
 	if(!qs[structure][operation])
 		throw new Error(u.format('No such operation "%s" on "%s"', operation, structure));
 
+	if(!qs[structure][operation].cypher)
+		throw new Error(u.format('No cypher query defined for operation "%s" on "%s"', operation, structure));
+
 	// lookup query string and...
 	var cypher_string = qs[structure][operation].cypher;
 
