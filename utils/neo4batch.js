@@ -86,7 +86,7 @@ module.exports = function(options) {
 				var t2 = ns_time();
 				resp.parse_ms = (t2 - t1) / 1e6;
 
-				// let caller know
+				// let caller know (or error)
 				callback(null, resp);
 			})
 		});
