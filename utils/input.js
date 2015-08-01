@@ -48,7 +48,7 @@ module.exports = function(types) {
 		input.structure = structureNames[input.type]
 		
 		// compute id if missing
-		input.id = ensureIdentifier[structure](request);
+		input.id = ensureIdentifier[input.structure](request);
 
 		return input;
 	}
