@@ -4,6 +4,7 @@ var H = require('highland');
 
 var neoBatch = require('./utils/neo4batch');
 var Queries =  require('./core/queries');
+var inputChecker = require('./utils/input');
 
 var defaultConfig = {
 	Neo4J: {
@@ -28,16 +29,16 @@ var defaultConfig = {
 	}
 };
 
-function Graphmalizer(config)
+function Graphmalizer(userConfig)
 {
 	// store configuration with user overrides
-	var conf = R.merge(defaultConfig, config || {});
+	var conf = R.merge(defaultConfig, userConfig || {});
 
 	// setup neo4j client
 	var batchCommit = H.wrapCallback(neoBatch(conf.Neo4J));
 
 	// setup input checker '~ schema validation'
-	var checkInput = require('./utils/input')(config.types);
+	var checkInput = inputChecker(conf.types);
 
 	// make query (uses config to determine type ~ structure mapping)
 	function prepare(o)
