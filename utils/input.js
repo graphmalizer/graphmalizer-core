@@ -34,7 +34,7 @@ module.exports = function(types) {
 	// and type to structure name lookup
 	var structureNames = R.mapObj(R.compose(R.head, Object.keys), types)
 
-	function prepareInput(input) {
+	return function prepareInput(input) {
 		// everything starts with a type
 		if(!input.type)
 			throw new Error(u.format("Input has to have a type field"));
