@@ -72,8 +72,12 @@ module.exports = function(options) {
 				}
 				catch(e)
 				{
-					console.log("failed parsing result");
+					log('failed parsing result')
 					resp.error = e.stack;
+
+					// give some hint
+					if(res.statusCode === 401)
+						resp.errorHit = 'Got 401 Not Authorized, see README.md on authentication';
 				}
 
 				log("size", resp);

@@ -60,6 +60,30 @@ G.register(stream)
   .each(H.log);
 ```
 
+# Neo4J Authorization
+
+Either set `config.Neo4J.auth` to `user:pass`
+
+```js
+var G = new Graphmalizer({
+	Neo4J: { auth: 'neo4j:neo4j' },
+	types: { /* ... */ }
+})
+```
+
+Or disable HTTP authentication all together, see
+[neo4j manual for details](http://neo4j.com/docs/stable/security-server.html#security-server-auth).
+
+Set the following in the *conf/neo4j-server.properties* file and restart server, `neo4j restart`.
+
+```properties
+# Disable authorization
+dbms.security.auth_enabled=false
+```
+
+If you don't know where this file is, you can try `mdfind neo4j-server.properties` on OSX.
+
+
 # Examples
 
 See [`examples/`](examples/)
