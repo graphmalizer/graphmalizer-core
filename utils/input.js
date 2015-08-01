@@ -1,3 +1,4 @@
+var u = require('util');
 var R = require('ramda');
 var hashOf = require('./hashOf');
 
