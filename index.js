@@ -36,9 +36,9 @@ function Graphmalizer(config)
 	// setup neo4j client
 	var batchCommit = H.wrapCallback(neoBatch(conf.Neo4J));
 
-	// make query (uses config to determine type ~ structure mapping)
 	var types = Object.keys(conf.types);
 
+	// make query (uses config to determine type ~ structure mapping)
 	function prepare(o)
 	{
 		// default operation is add
