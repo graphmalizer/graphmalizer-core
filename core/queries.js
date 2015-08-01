@@ -14,8 +14,8 @@ var qs = yaml.safeLoad(f, {filename: fn})
 // make cypher queries out of structure manipulation request
 exports.mkQuery = function(request)
 {
-	var operation = request.operation;
 	var structure = request.structure;
+	var operation = request.operation;
 
 	if(!qs[structure])
 		throw new Error(u.format('No such structure "%s"', structure));
@@ -32,10 +32,7 @@ exports.mkQuery = function(request)
 	// ...string replace all occurances of «type»
 	var s = template(cypher_string, {type: request.type});
 
-	// note ^ this is not a security breach, we assume input has been sanitized
-	// at this point. TODO actually we assume, but don't sanitise
-
-	// return promise
+	// neo4batch ready dictionary
 	return {
 		parameters: request,
 		statement: s
