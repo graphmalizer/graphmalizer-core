@@ -30,6 +30,7 @@ var ensureIdentifier = {
 module.exports = function(types) {
 
 	// for faster error reporting
+	console.log(types)
 	var typeNames = Object.keys(types).join(' ');
 
 	// and type to structure name lookup
@@ -48,7 +49,7 @@ module.exports = function(types) {
 		input.structure = structureNames[input.type]
 		
 		// compute id if missing
-		input.id = ensureIdentifier[input.structure](request);
+		input.id = ensureIdentifier[input.structure](input);
 
 		return input;
 	}
