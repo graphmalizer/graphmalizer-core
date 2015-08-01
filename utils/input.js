@@ -1,4 +1,5 @@
-var hashOf = require('../utils/hashOf');
+var R = require('ramda');
+var hashOf = require('./hashOf');
 
 var requireSourceTarget = function(input)
 {
@@ -21,7 +22,7 @@ var requireId = function(input)
 // we define how identifiers are created for each structure here
 var ensureIdentifier = {
 	node: requireId,
-	arc: requireSourcTarget,
+	arc: requireSourceTarget,
 	equivalence: requireSourceTarget
 };
 
