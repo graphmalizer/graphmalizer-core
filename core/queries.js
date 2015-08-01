@@ -29,7 +29,7 @@ var identifiers = {
 	equivalence: hashSourceTarget
 };
 
-// load queries from file: structure.operation[cypher, description, rules]
+// load queries from file
 var fn = path.join(__dirname, 'queries.yaml');
 var f = fs.readFileSync(fn, {encoding: 'utf8'});
 var qs = yaml.safeLoad(f, {filename: fn})
