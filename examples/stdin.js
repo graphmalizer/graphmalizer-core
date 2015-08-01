@@ -30,4 +30,4 @@ var stdin = H(process.stdin)
 var Graphmalizer = require('../index');
 
 var G = new Graphmalizer();
-G.register(stdin).each(log("OUT"));
+G.register(stdin).each(H.log);
