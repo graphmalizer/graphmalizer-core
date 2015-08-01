@@ -25,13 +25,13 @@ var ensureIdentifier = {
 	equivalence: requireSourceTarget
 };
 
-module.exports = function(config) {
+module.exports = function(types) {
 
 	// for faster error reporting
-	var names = Object.keys(config.types).join(' ');
+	var typeNames = Object.keys(types).join(' ');
 
 	// and type to structure name lookup
-	var types = R.mapObj(R.compose(R.head, Object.keys), config.types)
+	var structureNames = R.mapObj(R.compose(R.head, Object.keys), types)
 
 	function prepareInput(input) {
 		// everything starts with a type
@@ -39,8 +39,8 @@ module.exports = function(config) {
 			throw new Error(u.format("Input has to have a type field"));
 
 		// it has to be defined in the config
-		if(!config.types[input.type])
-			throw new Error(u.format('Unknown type "%s", must be one of: %s', input.type, names));
+		if(!types[input.type])
+			throw new Error(u.format('Unknown type "%s", must be one of: %s', input.type, typeNames));
 
 		// set structure name
 		o.structure = structureNames[input.type]
