@@ -7,10 +7,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "contributors": [{
-    "name": "Bert Spaan",
-    "email": "bert@waag.org"
-  }],
+  "contributors": [
+    {
+      "name": "Bert Spaan",
+      "email": "bert@waag.org"
+    }
+  ],
   "dependencies": {
     "highland": "~2.5.0",
     "js-yaml": "^3.3.1",
