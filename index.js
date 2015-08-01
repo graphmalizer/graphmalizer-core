@@ -37,7 +37,7 @@ function Graphmalizer(config)
 	var batchCommit = H.wrapCallback(neoBatch(conf.Neo4J));
 
 	// setup input checker '~ schema validation'
-	var checkInput = require('./utils/checkInput')(config.types);
+	var checkInput = require('./utils/input')(config.types);
 
 	// make query (uses config to determine type ~ structure mapping)
 	function prepare(o)
