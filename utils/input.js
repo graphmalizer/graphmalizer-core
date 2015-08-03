@@ -37,6 +37,17 @@ module.exports = function(types) {
 	var structureNames = R.mapObj(R.compose(R.head, Object.keys), types)
 
 	return function prepareInput(input) {
+		// queries are exceptional!
+		if(input.query)
+		{
+			// pretend they are operations on `query` structure
+			input.structure = 'query'
+			input.operation = input.query
+
+			// and bypass further checks
+			return input;
+		}
+
 		// everything starts with a type
 		if(!input.type)
 			throw new Error(u.format("Input has to have a type field"));
