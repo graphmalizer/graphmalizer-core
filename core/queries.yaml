@@ -338,6 +338,8 @@ arc:
             DELETE n
          RETURN true
 query:
+   test:
+      cypher: "WITH true AS b RETURN b"
    schema:
       description: Setup Neo4J schema
       cypher: |
