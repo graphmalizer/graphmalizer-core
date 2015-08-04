@@ -1,4 +1,3 @@
-
 // another example
 
 // usage: echo '{"type":"pit", "id":"a"}' | node stdin.js
