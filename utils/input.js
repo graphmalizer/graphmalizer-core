@@ -37,6 +37,20 @@ module.exports = function(types) {
 	var structureNames = R.mapObj(R.compose(R.head, Object.keys), types)
 
 	return function prepareInput(input) {
+
+		// default operation is add
+		input.operation = input.operation || 'add';
+
+		// default dataset is stdin
+		input.dataset = input.dataset || 'stdin';
+
+		// s, t alias for source/target
+		input.source = input.source || input.s;
+		input.target = input.target || input.t;
+
+		// ensure (empty) data field
+		input.data = input.data || {};
+
 		// queries are exceptional!
 		if(input.query)
 		{
@@ -48,7 +62,7 @@ module.exports = function(types) {
 			return input;
 		}
 
-		// everything starts with a type
+		// for normal documents, everything starts with a type
 		if(!input.type)
 			throw new Error(u.format("Input has to have a type field"));
 
@@ -58,10 +72,10 @@ module.exports = function(types) {
 
 		// set structure name
 		input.structure = structureNames[input.type]
-		
+
 		// compute id if missing
 		input.id = ensureIdentifier[input.structure](input);
 
 		return input;
 	}
-}
+};

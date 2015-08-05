@@ -43,19 +43,6 @@ function Graphmalizer(userConfig)
 	// make query (uses config to determine type ~ structure mapping)
 	function prepare(o)
 	{
-		// default operation is add
-		o.operation = o.operation || 'add';
-
-		// default dataset is stdin
-		o.dataset = o.dataset || 'stdin';
-
-		// s, t alias for source/target
-		o.source = o.source || o.s;
-		o.target = o.target || o.t;
-
-		// ensure (empty) data field
-		o.data = o.data || {};
-
 		try
 		{
 			var input = checkInput(o);
