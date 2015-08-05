@@ -95,6 +95,9 @@ function Graphmalizer(userConfig)
 				response: rr[1]
 			}
 		});
+
+	// now that all streams are setup, ensure schema creation
+	this.inputs.write(H([{query: 'schema'}]));
 }
 
 // subscribe a stream to the graphmalizer
