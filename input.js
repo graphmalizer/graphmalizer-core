@@ -39,9 +39,6 @@ module.exports = function(types) {
 		// default operation is add
 		input.operation = input.operation || 'add';
 
-		// default dataset is stdin
-		input.dataset = input.dataset || 'stdin';
-
 		// s, t alias for source/target
 		input.source = input.source || input.s;
 		input.target = input.target || input.t;
@@ -60,9 +57,13 @@ module.exports = function(types) {
 			return input;
 		}
 
+		// must pass a dataset
+		if(!input.dataset)
+			throw new Error("Input has to have a dataset field");
+
 		// for normal documents, everything starts with a type
 		if(!input.type)
-			throw new Error(u.format("Input has to have a type field"));
+			throw new Error("Input has to have a type field");
 
 		// it has to be defined in the config
 		if(!types[input.type])
