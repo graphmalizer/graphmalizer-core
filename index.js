@@ -59,7 +59,7 @@ function Graphmalizer(userConfig)
 		try
 		{
 			var input = checkInput(o);
-			var q = [Queries.mkQuery(input)]
+			var q = Queries.mkQuery(input);
 
 			// we have win!
 			return [q]
