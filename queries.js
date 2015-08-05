@@ -4,7 +4,7 @@ var fs = require('fs');
 var path = require('path');
 var yaml = require('js-yaml');
 
-var template = require('../utils/template');
+var template = require('./utils/template');
 
 // load queries from file
 var fn = path.join(__dirname, 'queries.yaml');

@@ -3,8 +3,8 @@ var R = require('ramda');
 var H = require('highland');
 
 var neoBatch = require('./utils/neo4batch');
-var Queries =  require('./core/queries');
-var inputChecker = require('./utils/input');
+var Queries =  require('./queries');
+var inputChecker = require('./input');
 
 var defaultConfig = {
 	Neo4J: {

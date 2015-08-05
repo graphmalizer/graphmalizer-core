@@ -1,6 +1,6 @@
 var u = require('util');
 var R = require('ramda');
-var hashOf = require('./hashOf');
+var hashOf = require('./utils/hashOf');
 
 var requireSourceTarget = function(input)
 {
