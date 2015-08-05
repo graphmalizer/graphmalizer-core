@@ -30,9 +30,7 @@ var ensureIdentifier = {
 module.exports = function(types) {
 
 	// for faster error reporting
-	console.log(types)
 	var typeNames = Object.keys(types).join(' ');
-
 	// and type to structure name lookup
 	var structureNames = R.mapObj(R.compose(R.head, Object.keys), types)
 
