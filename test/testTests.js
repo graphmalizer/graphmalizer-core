@@ -19,7 +19,7 @@ for(tname in tests.input) {
 		t.plan(2);
 
 		// commands to run
-		var inputs = tests.input[tname];
+		var inputs = '{"query":"clear"}\n' + tests.input[tname]// + '{"query": "graph"}';
 
 		var size = inputs.split('\n').length;
 
