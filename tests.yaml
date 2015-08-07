@@ -1,0 +1,31 @@
+input:
+  equivalenceChain: |
+    {"type":"equivalence","s":"x1","t":"x0","dataset":"test"}
+    {"type":"equivalence","s":"x2","t":"x1","dataset":"test"}
+    {"type":"equivalence","s":"x3","t":"x2","dataset":"test"}
+    {"type":"equivalence","s":"x4","t":"x3","dataset":"test"}
+    {"type":"equivalence","s":"x5","t":"x4","dataset":"test"}
+    {"type":"equivalence","s":"x6","t":"x5","dataset":"test"}
+    {"type":"equivalence","s":"x7","t":"x6","dataset":"test"}
+    {"type":"equivalence","s":"x8","t":"x7","dataset":"test"}
+    {"type":"equivalence","s":"x9","t":"x8","dataset":"test"}
+    {"type":"equivalence","s":"x10","t":"x9","dataset":"test"}
+    {"type":"equivalence","s":"x11","t":"x10","dataset":"test"}
+    {"type":"equivalence","s":"x12","t":"x11","dataset":"test"}
+    {"type":"equivalence","s":"x13","t":"x12","dataset":"test"}
+    {"type":"equivalence","s":"x14","t":"x13","dataset":"test"}
+    {"type":"equivalence","s":"x15","t":"x14","dataset":"test"}
+  oneEquivalence: |
+    {"type":"equivalence","s":"a","t":"b","dataset":"-"}
+  oneEquivalenceExisting: |
+    {"type":"node","id":"a","dataset":"-"}
+    {"type":"node","id":"b","dataset":"-"}
+    {"type":"equivalence","s":"a","t":"b","dataset":"-"}
+  overrideEquivalence: |
+    {"type":"equivalence","s":"a","t":"b","dataset":"-"}
+    {"type":"equivalence","s":"a","t":"b","dataset":"-"}
+  overrideEquivalenceExisting: |
+    {"type":"node","id":"a","dataset":"-"}
+    {"type":"node","id":"b","dataset":"-"}
+    {"type":"equivalence","s":"a","t":"b","dataset":"-"}
+    {"type":"equivalence","s":"a","t":"b","dataset":"-"}
