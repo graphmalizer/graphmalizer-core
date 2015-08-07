@@ -29,7 +29,7 @@ function run(tname, statements) {
 		t.plan(s.length);
 
 		// instantiate
-		var G = new Graphmalizer();
+		var G = new Graphmalizer({batchTimeout: 10});
 
 		var g = G
 			.register(tests)
