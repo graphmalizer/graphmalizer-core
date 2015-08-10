@@ -1,27 +1,41 @@
-alt:
-  eq1:
-    - {"type":"equivalence","s":"A","t":"B"}
-  eq1-exist:
-    - {"type":"node","id":"A"}
-    - {"type":"node","id":"B"}
-    - {"type":"equivalence","s":"A","t":"B"}
-  eq2:
-    - {"type":"equivalence","s":"A","t":"B"}
-    - {"type":"equivalence","s":"B","t":"C"}
-  eqTwice:
-    - {"type":"equivalence","s":"A","t":"B"}
-    - {"type":"equivalence","s":"A","t":"B"}
-  eqChain:
-    - {"type":"equivalence","s":"x2","t":"x1"}
-    - {"type":"equivalence","s":"x3","t":"x2"}
-    - {"type":"equivalence","s":"x4","t":"x3"}
-    - {"type":"equivalence","s":"x5","t":"x4"}
-    - {"type":"equivalence","s":"x6","t":"x5"}
-    - {"type":"equivalence","s":"x7","t":"x8"}
-  eqLoop:
-    - {"type":"equivalence","s":"x2","t":"x1"}
-    - {"type":"equivalence","s":"x3","t":"x2"}
-    - {"type":"equivalence","s":"x4","t":"x3"}
-    - {"type":"equivalence","s":"x5","t":"x4"}
-    - {"type":"equivalence","s":"x6","t":"x5"}
-    - {"type":"equivalence","s":"x7","t":"x1"}
+eq1:
+   # create an equivalence between nonexisting nodes
+   operations:
+      - {"type":"equivalence","s":"A","t":"B"}
+
+#  create an equivalence between existing nodes
+eq1-exist:
+   operations:
+      - {"type":"node","id":"A"}
+      - {"type":"node","id":"B"}
+      - {"type":"equivalence","s":"A","t":"B"}
+   nodes:
+      - {labels: ["_", "node"], id: "A"}
+      - {labels: ["_", "node"], id: "B"}
+      - {labels: ["="], id: "$1"}
+      - {labels: ["_", "_Rel", "equivalence"], id: "$2"}
+   edges:
+      - {source: "$1", target: "A"}
+      - {source: "$1", target: "B"}
+      - {source: "A", target: "$2"}
+      - {source: "$2", target: "B"}
+#  eq2:
+#    - {"type":"equivalence","s":"A","t":"B"}
+#    - {"type":"equivalence","s":"B","t":"C"}
+#  eqTwice:
+#    - {"type":"equivalence","s":"A","t":"B"}
+#    - {"type":"equivalence","s":"A","t":"B"}
+#  eqChain:
+#    - {"type":"equivalence","s":"x2","t":"x1"}
+#    - {"type":"equivalence","s":"x3","t":"x2"}
+#    - {"type":"equivalence","s":"x4","t":"x3"}
+#    - {"type":"equivalence","s":"x5","t":"x4"}
+#    - {"type":"equivalence","s":"x6","t":"x5"}
+#    - {"type":"equivalence","s":"x7","t":"x8"}
+#  eqLoop:
+#    - {"type":"equivalence","s":"x2","t":"x1"}
+#    - {"type":"equivalence","s":"x3","t":"x2"}
+#    - {"type":"equivalence","s":"x4","t":"x3"}
+#    - {"type":"equivalence","s":"x5","t":"x4"}
+#    - {"type":"equivalence","s":"x6","t":"x5"}
+#    - {"type":"equivalence","s":"x7","t":"x1"}
