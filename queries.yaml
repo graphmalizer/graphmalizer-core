@@ -235,20 +235,20 @@ node:
                n.dataset = {dataset}
             REMOVE n:_VACANT
          RETURN n
-   update:
-      ruleset:
-         - '  x  => 404 '
-         - ' ( ) => (*) '
-         - ' (*) => (*) '
-      cypher: |
-         MATCH (n:_ {id: {id}})
-         WITH n, coalesce(n.counter, 0) + 1 AS c
-         SET n = {data},
-             n.accessTime = timestamp(),
-             n.counter = c,
-             n.id = {id},
-             n.dataset = {dataset}
-         RETURN n
+#   update:
+#      ruleset:
+#         - '  x  => 404 '
+#         - ' ( ) => (*) '
+#         - ' (*) => (*) '
+#      cypher: |
+#         MATCH (n:_ {id: {id}})
+#         WITH n, coalesce(n.counter, 0) + 1 AS c
+#         SET n = {data},
+#             n.accessTime = timestamp(),
+#             n.counter = c,
+#             n.id = {id},
+#             n.dataset = {dataset}
+#         RETURN n
    remove:
       ruleset:
          - '    x  => 404   '
