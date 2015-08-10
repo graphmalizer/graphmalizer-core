@@ -16,13 +16,16 @@ equivalence:
          OPTIONAL MATCH (se) -[a]- ()
          OPTIONAL MATCH (te) -[b]- ()
 
+         WITH s, t, se, te, collect(DISTINCT a) AS as, collect(DISTINCT b) AS bs 
+
+
          // wipe the arcs
-         DELETE a, b
-
-         // wipe the ECRs
-         WITH s,t,se,te
+         FOREACH(a IN as | DELETE a)
+         FOREACH(b IN bs | DELETE b)
+         
+         // delete the old ECRs
          DELETE se, te
-
+         
          // ensure that at this point we have only one row
          WITH s, t LIMIT 1
 
