@@ -33,13 +33,13 @@ equivalence:
          CREATE (eq:`=`)
 
          // create relation node
-         CREATE UNIQUE (s) -[:«type»]-> (r:_:_Rel:«type» {id: {id}}) -[:«type»]-> (t)
+         CREATE UNIQUE (s) -[:`«type»`]-> (r:_:_Rel:`«type»` {id: {id}}) -[:`«type»`]-> (t)
            SET r.dataset = {dataset}
 
          // find all nodes reachable under the equivalence relation
          WITH s, t, r, eq LIMIT 1
 
-         OPTIONAL MATCH (s) -[:«type» * 0 .. 12]- (n:_)
+         OPTIONAL MATCH (s) -[:`«type»` * 0 .. 12]- (n:_)
             WHERE NOT n:_Rel // skip the relation nodes
             
          WITH s, t, r, eq, collect(DISTINCT n) AS ns LIMIT 1
@@ -87,7 +87,7 @@ equivalence:
          MATCH (r:_:_Rel {id: {id}})
          
          // find source, target nodes
-         MATCH (s) -[x:«type»]-> (r) -[y:«type»]-> (t)
+         MATCH (s) -[x:`«type»`]-> (r) -[y:`«type»`]-> (t)
          
          // remove the relation
          DELETE x, y, r
@@ -115,7 +115,7 @@ equivalence:
 
          // find all nodes reachable under the equivalence relation
          // (s) <-- <s_ec> --> (s_members)
-         OPTIONAL MATCH (s) -[:«type» * 0 ..]- (n:_)
+         OPTIONAL MATCH (s) -[:`«type»` * 0 ..]- (n:_)
          WHERE NOT n:_Rel // skip the relation nodes
    
             // add arc to new equivalence class representative
@@ -126,7 +126,7 @@ equivalence:
             collect(DISTINCT n) AS s_members
 
          // (t) <-- <t_ec> --> (t_members)
-         OPTIONAL MATCH (t) -[:«type» * 0 ..]- (n:_)
+         OPTIONAL MATCH (t) -[:`«type»` * 0 ..]- (n:_)
          WHERE NOT n:_Rel // skip the relation nodes
    
             // add arc to new equivalence class representative
@@ -221,7 +221,7 @@ node:
          - ' ( ) => (*) '
          - ' (*) => 500 '
       cypher: |
-         MERGE (n:_:_VACANT:«type» {id: {id}})
+         MERGE (n:_:_VACANT:`«type»` {id: {id}})
          ON CREATE
             SET n = {data},
                n.created = timestamp(),
@@ -287,12 +287,12 @@ arc:
          //MERGE (s) <-[:`=`]- (eq1:`=`)
          //MERGE (t) <-[:`=`]- (eq2:`=`)
          WITH s,t LIMIT 1
-         CREATE UNIQUE s -[:«type»]-> (r:_:_Rel:«type» {id: {id}}) -[:«type»]-> t
+         CREATE UNIQUE s -[:`«type»`]-> (r:_:_Rel:`«type»` {id: {id}}) -[:`«type»`]-> t
          SET r = {data},
              r.created = timestamp(),
              r.id = {id},
              r.dataset = {dataset}
-         //MERGE eq1 -[:`=R` {label: "«type»"}]-> eq2
+         //MERGE eq1 -[:`=R` {label: "`«type»`"}]-> eq2
          RETURN s, t, r LIMIT 1
    update:
       ruleset:
@@ -306,7 +306,7 @@ arc:
          - '   ( )-->(*)    =>    ( )-->(*) '
          - '   (*)-->(*)    =>    (*)-->(*) '
       cypher: |
-         MATCH (s)-[:«type»]-(r:_:_Rel:«type» {id: {id}})-[:«type»]->(t)
+         MATCH (s)-[:`«type»`]-(r:_:_Rel:`«type»` {id: {id}})-[:`«type»`]->(t)
          WITH r, coalesce(r.counter, 0) + 1 AS c
          SET r = {data},
              r.accessTime = timestamp(),
@@ -338,7 +338,7 @@ arc:
          - ' --( )-->(*)    =>  --( )   (*)   '
          - ' --(*)-->(*)    =>  --(*)   (*)   '
       cypher: |
-         MATCH (s)-[p:«type»]-(r:_:_Rel:«type» {id: {id}})-[q:«type»]->(t)
+         MATCH (s)-[p:`«type»`]-(r:_:_Rel:`«type»` {id: {id}})-[q:`«type»`]->(t)
             DELETE p,q,r
          WITH s.id AS source, t.id AS target
          OPTIONAL MATCH (n:_:_VACANT)
