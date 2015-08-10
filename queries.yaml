@@ -356,20 +356,11 @@ query:
    clear:
       description: Remove all managed nodes and edges
       cypher: |
-         OPTIONAL MATCH (:_)-[e]-()
-         	WITH DISTINCT e AS edge
-         	DELETE edge
-         	RETURN DISTINCT true AS success
+         OPTIONAL MATCH ()-[e]-() DELETE e
+         RETURN DISTINCT true
          UNION
-         OPTIONAL MATCH (n:_)
-         	WITH DISTINCT n AS node
-         	DELETE node
-         	RETURN DISTINCT true AS success
-         UNION
-         OPTIONAL MATCH (e:`=`)
-         	WITH DISTINCT e AS node
-         	DELETE node
-         	RETURN DISTINCT true AS success
+         OPTIONAL MATCH (n) DELETE n
+         RETURN DISTINCT true
    graph:
       description: Node and edge list
       cypher: |
