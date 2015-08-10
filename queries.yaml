@@ -345,7 +345,7 @@ query:
       cypher: |
          CREATE CONSTRAINT ON (n:_)
          	ASSERT n.id IS UNIQUE
-   clean:
+   clear:
       description: Remove all managed nodes and edges
       cypher: |
          OPTIONAL MATCH (:_)-[e]-()
