@@ -5,7 +5,7 @@
   "author": "Jelle 'wires' Herold <jelle@defekt.nl>",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/tape/bin/tape test/runSome.js | faucet"
+    "test": "node_modules/tape/bin/tape test/runSome.js"
   },
   "contributors": [
     {
