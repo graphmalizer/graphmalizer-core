@@ -362,3 +362,20 @@ query:
          	WITH DISTINCT e AS node
          	DELETE node
          	RETURN DISTINCT true AS success
+   graph:
+      description: Node and edge list
+      cypher: |
+         
+         // match nodes and return {labels: .., id: ..}
+         MATCH (n)
+         WITH collect(DISTINCT {
+            labels: labels(n),
+            id: coalesce(n.id, "neo:" + id(n))
+         }) AS nodes LIMIT 1
+         
+         // match edges and return {s: .., t: ..}
+         OPTIONAL MATCH s -[e]-> t
+         RETURN nodes, collect(DISTINCT {
+           source: coalesce(s.id, "neo:" + id(s)),
+           target: coalesce(t.id, "neo:" + id(t))
+         }) AS edges LIMIT 1
