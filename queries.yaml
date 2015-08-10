@@ -38,7 +38,7 @@ equivalence:
          // find all nodes reachable under the equivalence relation
          WITH s, t, r, eq LIMIT 1
 
-         OPTIONAL MATCH (s) -[:`«type»` * 0 .. 12]- (n:_)
+         OPTIONAL MATCH (s) -[:`«type»` * 0 .. 4]- (n:_)
             WHERE NOT n:_Rel // skip the relation nodes
             
          WITH s, t, r, eq, collect(DISTINCT n) AS ns LIMIT 1
