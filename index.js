@@ -1,6 +1,7 @@
 var u = require('util');
 var R = require('ramda');
 var H = require('highland');
+var argv = require('minimist');
 
 var neoBatch = require('./utils/neo4batch');
 var Queries =  require('./queries');
@@ -68,7 +69,7 @@ function Graphmalizer(userConfig)
 	var input = this.inputs
 		.merge()
 		.flatMap(prepare)
-		.batchWithTimeOrCount(conf.batchTimeout, conf.batchSize);
+		.batchWithTimeOrCount(argv.batchTimeout || conf.batchTimeout, argv.batchSize || conf.batchSize);
 
 	// commit batches sequentially
 	var output = input
