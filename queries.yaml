@@ -282,16 +282,16 @@ arc:
          ON CREATE SET s :_:_VACANT
          MERGE (t:_ {id: {target}})
          ON CREATE SET t :_:_VACANT
-         MERGE (s) <-[:`=`]- (eq1:`=`)
-         MERGE (t) <-[:`=`]- (eq2:`=`)
-         WITH s,t, eq1, eq2
-         MERGE s -[:«type»]-> (r:_:_Rel:«type» {id: {id}}) -[:«type»]-> t
+         //MERGE (s) <-[:`=`]- (eq1:`=`)
+         //MERGE (t) <-[:`=`]- (eq2:`=`)
+         WITH s,t LIMIT 1
+         CREATE UNIQUE s -[:«type»]-> (r:_:_Rel:«type» {id: {id}}) -[:«type»]-> t
          SET r = {data},
              r.created = timestamp(),
              r.id = {id},
              r.dataset = {dataset}
-         MERGE eq1 -[:`=R` {label: "«type»"}]-> eq2
-         RETURN *
+         //MERGE eq1 -[:`=R` {label: "«type»"}]-> eq2
+         RETURN s, t, r LIMIT 1
    update:
       ruleset:
          - '    x     x     =>  404         '
