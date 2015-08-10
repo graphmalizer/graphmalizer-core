@@ -13,8 +13,8 @@ equivalence:
          // find current equivalence class representatives (ECR)
          OPTIONAL MATCH (s) <-[:`=`]- (se:`=`)
          OPTIONAL MATCH (t) <-[:`=`]- (te:`=`)
-         OPTIONAL MATCH (se) -[a]-> ()
-         OPTIONAL MATCH (te) -[b]-> ()
+         OPTIONAL MATCH (se) -[a]- ()
+         OPTIONAL MATCH (te) -[b]- ()
 
          WITH s, t, se, te, collect(DISTINCT a) AS as, collect(DISTINCT b) AS bs 
 
@@ -44,12 +44,13 @@ equivalence:
          WITH s, t, r, eq, collect(DISTINCT n) AS ns LIMIT 1
 
          // link to new equivalence class representative
-         FOREACH (n IN ns | CREATE UNIQUE n <-[:`=`]- eq)
+         FOREACH (n IN ns |
+            CREATE UNIQUE n <-[:`=`]- eq
+            CREATE UNIQUE n -[:`=i`]-> eq
+         )
 
          // at this point we collect all members
-         WITH s, t, r, eq, count(ns) AS members LIMIT 1
-
-         RETURN s,t,r,eq,members
+         RETURN s, t, r, eq, count(ns) AS size LIMIT 1
 
 # // find nodes related (outward) to these nodes `n`
 #         UNWIND members AS n
