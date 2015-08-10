@@ -221,18 +221,20 @@ node:
          - ' ( ) => (*) '
          - ' (*) => 500 '
       cypher: |
-         MERGE (n:_:_VACANT:`«type»` {id: {id}})
+         MERGE (n:_ {id: {id}})
          ON CREATE
             SET n = {data},
-               n.created = timestamp(),
-               n.id = {id},
-               n.dataset = {dataset}
+                n.created = timestamp(),
+                n.id = {id},
+                n.dataset = {dataset}
+            SET n:`«type»`
          ON MATCH
             SET n = {data},
                 n.accessTime = timestamp(),
-               n.counter = coalesce(n.counter, 0) + 1,
-               n.id = {id},
-               n.dataset = {dataset}
+                n.counter = coalesce(n.counter, 0) + 1,
+                n.id = {id},
+                n.dataset = {dataset}
+            SET n:`«type»`
             REMOVE n:_VACANT
          RETURN n
 #   update:
