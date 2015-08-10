@@ -83,7 +83,7 @@ module.exports = function(options) {
 						resp.errorHit = 'Got 401 Not Authorized, see README.md on authentication';
 				}
 
-				log("size", resp);
+				log("size", result.length);
 
 				// parsing duration
 				var t2 = ns_time();
