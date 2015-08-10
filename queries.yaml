@@ -48,35 +48,37 @@ equivalence:
          // at this point we collect all members
          WITH s, t, r, eq, collect(DISTINCT n.id) AS members LIMIT 1
 
-         // find nodes related (outward) to these nodes `n`
-         UNWIND members AS n
-            OPTIONAL MATCH n -->(q:_Rel)--> () <-[:`=`]- (eq1:`=`)
-               WHERE eq <> eq1
-   
-            // extract the labels on q and filter non-matching
-            WITH head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb,
-               s, t, r, eq, members, q, eq1
-            WHERE NOT eq1 IS NULL 
-   
-            // create arc between equivalence classes 
-            MERGE eq -[:`=R` {label: lb}]-> eq1
+         RETURN s,t,r,eq,members
 
-         // find nodes related (inward) to these nodes `n`
-         WITH s, t, r, eq, members
-         
-         UNWIND members AS n
-            OPTIONAL MATCH n <--(q:_Rel)<-- () <-[:`=`]- (eq2:`=`)
-               WHERE eq <> eq2
-   
-            // extract the labels on q and filter non-matching
-            WITH head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb,
-               s, t, r, eq, n, q, eq2
-            WHERE NOT eq2 IS NULL
-               
-            // create arc between equivalence classes 
-            MERGE eq <-[:`=R` {label: lb}]- eq2
-
-         RETURN DISTINCT s, t, r, eq
+# // find nodes related (outward) to these nodes `n`
+#         UNWIND members AS n
+#            OPTIONAL MATCH n -->(q:_Rel)--> () <-[:`=`]- (eq1:`=`)
+#               WHERE eq <> eq1
+#   
+#            // extract the labels on q and filter non-matching
+#            WITH head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb,
+#               s, t, r, eq, members, q, eq1
+#            WHERE NOT eq1 IS NULL 
+#   
+#            // create arc between equivalence classes 
+#            CREATE UNIQUE eq -[:`=R` {label: lb}]-> eq1
+#
+#         // find nodes related (inward) to these nodes `n`
+#         WITH s, t, r, eq, members LIMIT 1
+#         
+#         UNWIND members AS n
+#            OPTIONAL MATCH n <--(q:_Rel)<-- () <-[:`=`]- (eq2:`=`)
+#               WHERE eq <> eq2
+#   
+#            // extract the labels on q and filter non-matching
+#            WITH head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb,
+#               s, t, r, eq, n, q, eq2
+#            WHERE NOT eq2 IS NULL
+#               
+#            // create arc between equivalence classes 
+#            CREATE UNIQUE eq <-[:`=R` {label: lb}]- eq2
+#
+#         RETURN DISTINCT s, t, r, eq
    remove:
       cypher: |
          // find relation node
