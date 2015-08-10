@@ -3,12 +3,12 @@ equivalence:
       cypher: |
          // find s, t nodes
          MERGE (s:_ {id: {source}})
-         ON CREATE SET s :_:_VACANT
+           ON CREATE SET s :_:_VACANT
 
          MERGE (t:_ {id: {target}})
-         ON CREATE SET t :_:_VACANT
+           ON CREATE SET t :_:_VACANT
 
-         WITH s,t
+         WITH s,t LIMIT 1
 
          // find current equivalence class representatives (ECR)
          OPTIONAL MATCH (s) <-[:`=`]- (se:`=`)
@@ -24,7 +24,7 @@ equivalence:
          DELETE se, te
 
          // ensure that at this point we have only one row
-         WITH DISTINCT s, t
+         WITH s, t LIMIT 1
 
          // create equivalence class node
          CREATE (eq:`=`)
@@ -34,7 +34,8 @@ equivalence:
          SET r.dataset = {dataset}
 
          // find all nodes reachable under the equivalence relation
-         WITH s, t, r, eq
+         WITH s, t, r, eq LIMIT 1
+
          OPTIONAL MATCH (s) -[:«type» * 0 ..]- (n:_)
             WHERE NOT n:_Rel // skip the relation nodes
 
@@ -42,7 +43,7 @@ equivalence:
          MERGE n <-[:`=`]- eq
 
          // at this point we collect all members
-         WITH s, t, r, eq, collect(DISTINCT n) AS members
+         WITH s, t, r, eq, collect(DISTINCT n.id) AS members LIMIT 1
 
          // find nodes related (outward) to these nodes `n`
          UNWIND members AS n
