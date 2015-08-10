@@ -13,11 +13,10 @@ equivalence:
          // find current equivalence class representatives (ECR)
          OPTIONAL MATCH (s) <-[:`=`]- (se:`=`)
          OPTIONAL MATCH (t) <-[:`=`]- (te:`=`)
-         OPTIONAL MATCH (se) -[a]- ()
-         OPTIONAL MATCH (te) -[b]- ()
+         OPTIONAL MATCH (se) -[a]-> ()
+         OPTIONAL MATCH (te) -[b]-> ()
 
          WITH s, t, se, te, collect(DISTINCT a) AS as, collect(DISTINCT b) AS bs 
-
 
          // wipe the arcs
          FOREACH(a IN as | DELETE a)
