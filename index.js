@@ -100,7 +100,7 @@ function Graphmalizer(userConfig)
 	// now that all streams are setup, ensure schema creatio
 	// todo, actually this sucks because it cannot be run
 	// in transaction with write
-	this.inputs.write(H([]));//{query: 'schema'}]));
+	//this.inputs.write(H([]));//{query: 'schema'}]));
 }
 
 // subscribe a stream to the graphmalizer
