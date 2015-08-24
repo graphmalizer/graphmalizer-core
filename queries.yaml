@@ -64,127 +64,60 @@ equivalence:
          DELETE x, y, r
 
          // ok, wipe the old ECR
-         WITH s, t
+         WITH s, t LIMIT 1
          
-         // find & wipe the arcs
+         // find current equivalence class representatives (ECR)
          OPTIONAL MATCH (s) <-[:`=`]- (se:`=`)
+         OPTIONAL MATCH (t) <-[:`=`]- (te:`=`)
          OPTIONAL MATCH (se) -[a]- ()
-         DELETE a
+         OPTIONAL MATCH (te) -[b]- ()
 
-         // wipe the ECRs
-         WITH s, t, se
-         DELETE se
+         WITH s, t, se, te, collect(DISTINCT a) AS as, collect(DISTINCT b) AS bs 
 
+         // wipe the arcs
+         FOREACH(a IN as | DELETE a)
+         FOREACH(b IN bs | DELETE b)
+         
+         // delete the old ECRs
+         DELETE se, te
+         
          // ensure that at this point we have only one row
-         WITH DISTINCT s, t
+         WITH s, t LIMIT 1
 
          // create equivalence class nodes for s and t
-         MERGE (s) <-[:`=`]- (s_ec:`=`)
-         MERGE (t) <-[:`=`]- (t_ec:`=`)
+         MERGE (s) <-[:`=`]- (se:`=`)
+         MERGE (t) <-[:`=`]- (te:`=`)
 
-         WITH s, t, s_ec, t_ec
-
-         // find all nodes reachable under the equivalence relation
-         // (s) <-- <s_ec> --> (s_members)
-         OPTIONAL MATCH (s) -[:`«type»` * 0 ..]- (n:_)
-         WHERE NOT n:_Rel // skip the relation nodes
-   
-            // add arc to new equivalence class representative
-            MERGE n <-[:`=`]- s_ec
-
-            // collect all s-members
-            WITH s, t, s_ec, t_ec,
-            collect(DISTINCT n) AS s_members
-
-         // (t) <-- <t_ec> --> (t_members)
-         OPTIONAL MATCH (t) -[:`«type»` * 0 ..]- (n:_)
-         WHERE NOT n:_Rel // skip the relation nodes
-   
-            // add arc to new equivalence class representative
-            MERGE n <-[:`=`]- t_ec
-
-            // collect all t-members
-            WITH s, t, s_ec, t_ec, s_members,
-            collect(DISTINCT n) AS t_members
-
-         // find (s) ---> <s_out>
-         UNWIND s_members AS n
-            OPTIONAL MATCH n -->(q:_Rel)--> () <-[:`=`]- (eq_out:`=`)
-            WHERE s_ec <> eq_out
-   
-            // extract the labels on q and filter non-matching
-            WITH s, t, s_ec, t_ec, s_members, t_members, eq_out,
-            head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb
-               
-            WHERE NOT eq_out IS NULL 
-   
-            // create arc between equivalence classes 
-            MERGE s_ec -[:`=R` {label: lb}]-> eq_out
-   
-            // collect all outward ECRs
-            WITH s, t, s_ec, t_ec, s_members, t_members,
-            collect(DISTINCT eq_out) AS s_out
+         WITH s, t, se, te LIMIT 1
          
-         // find (s) <--- <s_in>
-         UNWIND s_members AS n
-            OPTIONAL MATCH n <--(q:_Rel)<-- () <-[:`=`]- (eq_in:`=`)
-               WHERE s_ec <> eq_in
-   
-            // extract the labels on q and filter non-matching
-            WITH s, t, s_ec, t_ec, s_members, t_members, s_out,
-            head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb
-            WHERE NOT eq_in IS NULL 
-               
-            // create arc between equivalence classes 
-            MERGE s_ec <-[:`=R` {label: lb}]- eq_in
+         // s-size
+         OPTIONAL MATCH (s) -[:`«type»` * 0 .. 4]- (n:_)
+             WHERE NOT n:_Rel // skip the relation nodes
 
-            // collect all inward ECRs
-            WITH s, t, s_ec, t_ec, s_members, t_members, s_out,
-            collect(DISTINCT eq_in) AS s_in
+         WITH s, t, se, te, collect(DISTINCT n) AS ns LIMIT 1
 
-         // find (t) ---> <t_out>
-         UNWIND t_members AS n
-            OPTIONAL MATCH n -->(q:_Rel)--> () <-[:`=`]- (eq_out:`=`)
-            WHERE t_ec <> eq_out
-   
-            // extract the labels on q and filter non-matching
-            WITH s, t, s_ec, t_ec, s_members, t_members, s_out, s_in, eq_out,
-            head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb
-               
-            WHERE NOT eq_out IS NULL 
-   
-            // create arc between equivalence classes 
-            MERGE t_ec -[:`=R` {label: lb}]-> eq_out
-   
-            // collect all outward ECRs
-            WITH s, t, s_ec, t_ec, s_members, t_members, s_out, s_in,
-            collect(DISTINCT eq_out) AS t_out
+         // link to new equivalence class representative
+         FOREACH (n IN ns |
+            CREATE UNIQUE n <-[:`=`]- se
+            CREATE UNIQUE n -[:`=i`]-> se
+         )
+
+         WITH s, t, se, te, count(ns) AS s_size LIMIT 1
          
-         // find (s) <--- <eq_in>
-         UNWIND t_members AS n
-            OPTIONAL MATCH n <--(q:_Rel)<-- () <-[:`=`]- (eq_in:`=`)
-               WHERE t_ec <> eq_in
-   
-            // extract the labels on q and filter non-matching
-            WITH s, t, s_ec, t_ec, s_members, t_members, s_out, s_in, t_out, eq_in,
-            head(filter(lab IN labels(q) WHERE NOT lab IN ["_", "_Rel"])) AS lb
-            WHERE NOT eq_in IS NULL 
-               
-            // create arc between equivalence classes 
-            MERGE t_ec <-[:`=R` {label: lb}]- eq_in
+         OPTIONAL MATCH (t) -[:`«type»` * 0 .. 4]- (n:_)
+             WHERE NOT n:_Rel // skip the relation nodes
 
-            // collect all inward ECRs
-            WITH s, t, s_ec, t_ec, s_members, t_members, s_out, s_in, t_out,
-            collect(DISTINCT eq_in) AS t_in
+         WITH s, t, se, te, s_size, collect(DISTINCT n) AS ns LIMIT 1
 
-         SET s_ec.size = length(s_members)
-         SET t_ec.size = length(t_members)
-         SET s_ec.inDegree = length(s_in)
-         SET t_ec.inDegree = length(t_in)
-         SET s_ec.outDegree = length (s_out)
-         SET t_ec.outDegree = length (t_out)
+         // link to new equivalence class representative
+         FOREACH (n IN ns |
+            CREATE UNIQUE n <-[:`=`]- te
+            CREATE UNIQUE n -[:`=i`]-> te
+         )
 
-         RETURN s, t, s_ec, t_ec
+         // at this point we collect all members
+         RETURN s, t, se, te, s_size, count(ns) AS t_size LIMIT 1
+
 node:
    add:
       ruleset:
