@@ -76,6 +76,10 @@ function Graphmalizer(userConfig)
 		.fork()
 		.map(batchCommit) // a -> stream b
 		.series()
+		.map(function(r){
+			console.log("GRAPHMALIZER =>", r.results.length, "docs,", r.duration_ms + "ms");
+			return r;
+		})
 		.pluck('results');
 
 	// zip into [request-batch, response-batch]
