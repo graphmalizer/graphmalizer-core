@@ -1,6 +1,6 @@
 // another example
 
-// usage: echo '{"type":"pit", "id":"a"}' | node stdin.js
+// usage: echo '{"type":"node", "id":"a", "dataset": "test"}' | node stdin.js
 
 var H = require('highland');
 
