@@ -1,6 +1,6 @@
 // Another example
 
-// Usage:
+// Usage (or run ./stdin.sh):
 //   Add single node:
 //     echo '{"type":"node", "id":"a", "dataset": "test"}' | node stdin.js
 //   Remove single equivalence:
