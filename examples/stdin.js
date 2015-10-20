@@ -1,6 +1,10 @@
-// another example
+// Another example
 
-// usage: echo '{"type":"node", "id":"a", "dataset": "test"}' | node stdin.js
+// Usage:
+//   Add single node:
+//     echo '{"type":"node", "id":"a", "dataset": "test"}' | node stdin.js
+//   Remove single equivalence:
+//     echo '-{"type":"equivalence", "source":"a", "target": "a", "dataset": "test"}' | node stdin.js
 
 var H = require('highland');
 
