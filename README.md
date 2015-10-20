@@ -60,7 +60,16 @@ G.register(stream)
   .each(H.log);
 ```
 
-# Neo4J Authorization
+# Neo4J
+
+## Installation on OSX
+
+[Homebrew](http://brew.sh/) does the trick.
+
+	brew install --devel neo4j
+	neo4j start
+
+## Authorization
 
 Either set `config.Neo4J.auth` to `user:pass`
 
