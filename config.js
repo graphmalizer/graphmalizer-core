@@ -27,10 +27,6 @@ function detectDockerLink() {
   var addr = process.env.NEO4J_PORT_7474_TCP_ADDR
 	var port = process.env.NEO4J_PORT_7474_TCP_PORT
 
-  console.log("ADDR=>",addr)
-	console.log("PORT=>",port)
-  console.log(process.env)
-
   // address specified?
 	var addr = process.env.NEO4J_PORT_7474_TCP_ADDR
 	if(!addr)
