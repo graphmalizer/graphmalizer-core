@@ -80,7 +80,7 @@ module.exports = function(options) {
 
 					// give some hint
 					if(res.statusCode === 401)
-						resp.errorHit = 'Got 401 Not Authorized, see README.md on authentication';
+						resp.errorHint = 'Got 401 Not Authorized, see README.md on authentication';
 				}
 
 				log("size", result.length);
