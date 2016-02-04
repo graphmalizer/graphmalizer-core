@@ -21,9 +21,10 @@
     "ramda": "~0.14.0"
   },
   "devDependencies": {
+    "faucet": "*",
     "js-combinatorics": "~0.5.0",
-    "tape": "^4.0.3",
-    "faucet": "*"
+    "standard": "^5.4.1",
+    "tape": "^4.0.3"
   },
   "repository": {
     "type": "git",
