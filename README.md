@@ -94,8 +94,25 @@ dbms.security.auth_enabled=false
 
 If you don't know where this file is, you can try `mdfind neo4j-server.properties` on OSX.
 
+## Development
+
+You can also use the [`wercker` commandline interface](http://wercker.com/cli/).
+
+Setup docker host (automatically starts it) or just start it if you
+have done this before (check with `docker-machine ls`).
+
+    docker-machine create -d virtualbox graphmalizer
+    docker-machine start graphmalizer
+
+Then you want to update your shell so I knows about the docker host.
+
+    eval $(docker-machine env graphmalizer) # bash
+    eval (docker-machine env graphmalizer)  # fish
+
+Now you can build and test using wercker:
+
+    wercker build
 
 # Examples
 
 See [`examples/`](examples/)
-
