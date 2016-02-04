@@ -1,5 +1,3 @@
-var u = require('util')
-var R = require('ramda')
 var H = require('highland')
 var argv = require('minimist')
 
@@ -26,7 +24,7 @@ function Graphmalizer (userConfig) {
 
       // we have win!
       return [q]
-    } catch(err) {
+    } catch (err) {
       // other than spewing, we ignore errors
       console.error(err.stack)
 
@@ -83,8 +81,9 @@ function Graphmalizer (userConfig) {
 // subscribe a stream to the graphmalizer
 Graphmalizer.prototype.register = function (stream) { // ensure valid arguments
   if (stream) {
-    if (!H.isStream(stream))
+    if (!H.isStream(stream)) {
       throw new Error('Must pass a (highland) stream')
+    }
 
     // register input stream
     this.inputs.write(stream)

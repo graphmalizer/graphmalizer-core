@@ -16,14 +16,17 @@ exports.mkQuery = function (request) {
   var structure = request.structure
   var operation = request.operation
 
-  if (!qs[structure])
+  if (!qs[structure]) {
     throw new Error(u.format('No such structure "%s"', structure))
+  }
 
-  if (!qs[structure][operation])
+  if (!qs[structure][operation]) {
     throw new Error(u.format('No such operation "%s" on "%s"', operation, structure))
+  }
 
-  if (!qs[structure][operation].cypher)
+  if (!qs[structure][operation].cypher) {
     throw new Error(u.format('No cypher query defined for operation "%s" on "%s"', operation, structure))
+  }
 
   // lookup query string and...
   var cypher_string = qs[structure][operation].cypher
