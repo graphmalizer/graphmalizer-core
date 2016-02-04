@@ -34,7 +34,7 @@ _(process.stdin)
     // diff-ish
     if (/^[+-]/.test(s)) {
       var o = JSON.parse(s.slice(1))
-      o.operation = (s[0] == '+' ? 'add' : 'remove')
+      o.operation = (s[0] === '+' ? 'add' : 'remove')
       return o
     }
 
@@ -72,8 +72,7 @@ _(process.stdin)
       // pass errors along the stream and consume next value
       push(err)
       next()
-    }
-    else if (x === _.nil) {
+    } else if (x === _.nil) {
       // pass nil (end event) along the stream
       push(null, x)
     } else {

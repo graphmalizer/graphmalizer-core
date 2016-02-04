@@ -21,7 +21,7 @@ var stdin = H(process.stdin)
     // diff-ish
     if (/^[+-]/.test(s)) {
       var o = JSON.parse(s.slice(1))
-      o.operation = (s[0] == '+' ? 'add' : 'remove')
+      o.operation = (s[0] === '+' ? 'add' : 'remove')
       return o
     }
 

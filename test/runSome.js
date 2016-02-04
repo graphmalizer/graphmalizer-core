@@ -2,7 +2,6 @@
 var Graphmalizer = require('../index')
 var H = require('highland')
 var R = require('ramda')
-var pp = require('prttty')
 var u = require('util')
 
 // test anything protocol
@@ -29,7 +28,7 @@ function runOne (tname, statements) {
     var G = new Graphmalizer({batchTimeout: 10})
     G.register(H(statements))
       .each(function (x) {
-        t.assert(x.response.length == 1, 'we have one row in response')
+        t.assert(x.response.length === 1, 'we have one row in response')
         rs.push(x)
       })
       .done(function () {
@@ -72,5 +71,5 @@ function runPermutations (tname, statements) {
     })
 }
 
-for (tname in spec)
+for (var tname in spec)
   runPermutations(tname, spec[tname].operations)
