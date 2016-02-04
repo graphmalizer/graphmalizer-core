@@ -6,34 +6,12 @@ var argv = require('minimist');
 var neoBatch = require('./utils/neo4batch');
 var Queries =  require('./queries');
 var inputChecker = require('./input');
-
-var defaultConfig = {
-	Neo4J: {
-		hostname: 'localhost',
-		port: 7474
-	},
-
-	batchTimeout: 1000,
-	batchSize: 2500,
-
-	// behave like a graph with equivalences
-	types: {
-		node: {
-			node: {}
-		},
-		arc: {
-			arc: {}
-		},
-		equivalence: {
-			equivalence: {}
-		}
-	}
-};
+var config = require('./config');
 
 function Graphmalizer(userConfig)
 {
 	// store configuration with user overrides
-	var conf = R.merge(defaultConfig, userConfig || {});
+	var conf = config(userConfig);
 
 	// setup neo4j client
 	var batchCommit = H.wrapCallback(neoBatch(conf.Neo4J));
