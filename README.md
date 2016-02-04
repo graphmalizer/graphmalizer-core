@@ -1,3 +1,5 @@
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
+
 [![wercker status](https://app.wercker.com/status/7c2c4cd1b96c26872d7f98c3816c8f76/s/master "wercker status")](https://app.wercker.com/project/bykey/7c2c4cd1b96c26872d7f98c3816c8f76)
 
 # Config
