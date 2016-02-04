@@ -123,5 +123,9 @@ Graphmalizer.prototype.register = function(stream)
 	return this.system.fork();
 };
 
+Graphmalizer.prototype.shutdown = function() {
+	// register input stream
+	this.inputs.end();
+}
 
 module.exports = Graphmalizer;

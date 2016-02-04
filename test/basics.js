@@ -17,14 +17,20 @@ test('terminate without operations', function(t){
 			t.pass('closed output stream');
 			t.end();
 		});
+	G.shutdown()
 });
 
 // test if graphmalizer starts and terminates
 test('terminate with operations', function(t){
 	t.plan(3);
 	var G = new Graphmalizer({batchTimeout: 1});
+	var testNode = {
+			dataset: 'test',
+			type: 'node',
+			id: 'x'
+	}
 	t.pass('created graphmalizer');
-	G.register(H([{}]))
+	G.register(H([testNode]))
 		.each(function(x){
 			t.pass('returned one result');
 		})
@@ -32,4 +38,5 @@ test('terminate with operations', function(t){
 			t.pass('closed output stream');
 			t.end();
 		});
+	G.shutdown()
 });
