@@ -6,31 +6,30 @@
 //   Remove single equivalence:
 //     echo '-{"type":"equivalence", "source":"a", "target": "a", "dataset": "test"}' | node stdin.js
 
-var H = require('highland');
+var H = require('highland')
 
 // read NDJSON from standard input
 var stdin = H(process.stdin)
 
-	.splitBy('\n')
+  .splitBy('\n')
 
-	.filter(function(s){
-		return s !== '';
-	})
+  .filter(function (s) {
+    return s !== ''
+  })
 
-	.map(function(s){
-		// diff-ish
-		if(/^[+-]/.test(s))
-		{
-			var o = JSON.parse(s.slice(1));
-			o.operation = (s[0] == '+' ? 'add' : 'remove');
-			return o;
-		}
+  .map(function (s) {
+    // diff-ish
+    if (/^[+-]/.test(s)) {
+      var o = JSON.parse(s.slice(1))
+      o.operation = (s[0] == '+' ? 'add' : 'remove')
+      return o
+    }
 
-		// regular obj
-		return JSON.parse(s);
-	});
+    // regular obj
+    return JSON.parse(s)
+  })
 
-var Graphmalizer = require('../index');
+var Graphmalizer = require('../index')
 
-var G = new Graphmalizer();
-G.register(stdin).each(H.log);
+var G = new Graphmalizer()
+G.register(stdin).each(H.log)
