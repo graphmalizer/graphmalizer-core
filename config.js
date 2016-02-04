@@ -27,21 +27,13 @@ function detectDockerLink () {
   var addr = process.env.NEO4J_PORT_7474_TCP_ADDR
   var port = process.env.NEO4J_PORT_7474_TCP_PORT
 
-  // address specified?
-  var addr = process.env.NEO4J_PORT_7474_TCP_ADDR
-  if (!addr)
-    return {}
-
-  // port specified?
-  var port = process.env.NEO4J_PORT_7474_TCP_PORT
-  if (!port)
-    return {}
-
-  // found correct docker links, create and return config
-  return {
-    Neo4J: {
-      hostname: addr,
-      port: port
+  // found docker links, create and return config
+  if (addr && port) {
+    return {
+      Neo4J: {
+        hostname: addr,
+        port: port
+      }
     }
   }
 }
