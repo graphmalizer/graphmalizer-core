@@ -1,21 +1,6 @@
 var ds = require('datascript')
 var R = require('ramda')
 
-// this trick only works because we use negative nrs for nodes
-// TODO still wondering if I'm checking everything though... prob. not
-function isPermutation (assignment) {
-  return R.eq(R.length(R.uniq(assignment)), R.length(assignment))
-}
-
-function isIso (q, db) {
-  var assigments =
-    R.compose(
-      R.forEach(r => console.log('Match:', r)),
-      R.filter(isPermutation)
-    )(ds.q(q, db))
-  return R.length(assigments) > 0
-}
-
 // input: list of edge (source, target) node id's [ [n1, n2], ... ]
 var empty = ds.empty_db()
 
@@ -53,58 +38,32 @@ function mkQuery (edges) {
       return `[?e${i} "s" ?n${s}] [?e${i} "t" ?n${t}] `
     })
   )(edges)
-
   return `[:find ${nstr} ${estr} :in $ :where ${topostr}]`
 }
 
-function test_db_with () {
-  var db1 = mkDB([
-    [1, 2],
-    [2, 3],
-    [3, 4]
-  ])
-  var db2 = mkDB([
-    [1, 2],
-    [2, 3],
-    [2, 4]
-  ])
-  var q = mkQuery([
-    [1, 2],
-    [2, 3],
-    [2, 4]
-  ])
+// this trick only works because we use negative nrs for nodes
+// TODO still wondering if I'm checking everything though... prob. not
+function isPermutation (assignment) {
+  return R.eq(R.length(R.uniq(assignment)), R.length(assignment))
+}
+
+/** usage:
+var graphCheck = require('graphcheck')
+var g1 = [[1,2],[2,3],[1,3]]
+var g2 = [[4,3],[4,21],[21,3]]
+graphCheck(g1, g2) // => true
+*/
+module.exports = function similarGraph (edges_graph1, edges_graph2) {
+  var db = mkDB(edges_graph1)
+  var q = mkQuery(edges_graph2)
   console.log(q)
-  console.log('graph 1 isIso? = ', isIso(q, db1))
-  console.log('graph 2 isIso? = ', isIso(q, db2))
+  // we consider the graphs similar if we can find at least one assigment
+  // without overlap
+  var assigments =
+    R.compose(
+      R.forEach(r => console.log('Match:', r)),
+      R.filter(isPermutation)
+    )(ds.q(q, db))
+
+  return R.length(assigments) > 0
 }
-
-function test_db_with2 () {
-  // empty database
-  var db = ds.empty_db()
-
-  // add edges, use negative nrs for the nodes
-  // this is so that we can `R.uniq` the set and check
-  // that we have no duplicate assigments
-  var not_iso = ds.db_with(db, [
-    { ':db/id': 1, s: -1, t: -2 },
-    { ':db/id': 2, s: -2, t: -3 },
-    { ':db/id': 3, s: -3, t: -4 }
-  ])
-
-  var iso = ds.db_with(db, [
-    { ':db/id': 1, s: -1, t: -2 },
-    { ':db/id': 2, s: -2, t: -3 },
-    { ':db/id': 3, s: -2, t: -4 }
-  ])
-
-  var q = '[:find ?n1 ?n2 ?n3 ?n4 ?e1 ?e2 ?e3 :in $ :where ' +
-      '[?e1 "s" ?n1] [?e1 "t" ?n2]' +
-      '[?e2 "s" ?n2] [?e2 "t" ?n3]' +
-      '[?e3 "s" ?n2] [?e3 "t" ?n4] ]'
-
-  console.log('graph 1 (not isomorphic): isIso?=', isIso(q, not_iso))
-  console.log('graph 2 (isomorphic): isIso?=', isIso(q, iso))
-}
-
-test_db_with()
-test_db_with2()
