@@ -1,12 +1,10 @@
 var ds = require('datascript')
 var R = require('ramda')
 
-var inSet = R.flip(R.containsWith(R.eqDeep))
-
-function eq_set (s1, s2) {
-  var s1_sub_s2 = R.all(inSet(s2), s1)
-  var s2_sub_s1 = R.all(inSet(s1), s2)
-  return R.and(s1_sub_s2, s2_sub_s1)
+// this trick only works because we use negative nrs for nodes
+// TODO still wondering if I'm checking everything though... prob. not
+function isPermutation (assignment) {
+  return R.eq(R.length(R.uniq(assignment)), R.length(assignment))
 }
 
 function isIso (q, db) {
@@ -18,21 +16,71 @@ function isIso (q, db) {
   return R.length(assigments) > 0
 }
 
+// input: list of edge (source, target) node id's [ [n1, n2], ... ]
+var empty = ds.empty_db()
 
+function mkDB (edges) {
+  var content = edges.map(function (edge, idx) {
+    var s = edge[0]
+    var t = edge[1]
+    return { ':db/id': idx + 1, s: -s, t: -t }
+  })
+  return ds.db_with(empty, content)
+}
 
+function mkQuery (edges) {
+  // ?n1 ?n2 ...
+  var nstr = R.compose(
+    R.join(' '),
+    R.map(n => `?n${n}`),
+    R.uniq,
+    R.flatten
+  )(edges)
+
+  // ?e1 ?e2 ...
+  var estr = R.compose(
+    R.join(' '),
+    R.mapIndexed((edge, i) => `?e${i + 1}`)
+  )(edges)
+
+  // [?e1 "s" ?n1] [?e1 "t" ?n2] ...
+  var topostr = R.compose(
+    R.join(' '),
+    R.mapIndexed(function (edge, idx) {
+      var s = edge[0]
+      var t = edge[1]
+      var i = idx + 1
+      return `[?e${i} "s" ?n${s}] [?e${i} "t" ?n${t}] `
+    })
+  )(edges)
+
+  return `[:find ${nstr} ${estr} :in $ :where ${topostr}]`
 }
 
 function test_db_with () {
+  var db1 = mkDB([
+    [1, 2],
+    [2, 3],
+    [3, 4]
   ])
-// this trick only works because we use negative nrs for nodes
-// TODO still wondering if I'm checking everything though... prob. not
-function isPermutation (assignment) {
-  return R.eq(R.length(R.uniq(assignment)), R.length(assignment))
+  var db2 = mkDB([
+    [1, 2],
+    [2, 3],
+    [2, 4]
+  ])
+  var q = mkQuery([
+    [1, 2],
+    [2, 3],
+    [2, 4]
+  ])
+  console.log(q)
+  console.log('graph 1 isIso? = ', isIso(q, db1))
+  console.log('graph 2 isIso? = ', isIso(q, db2))
 }
 
 function test_db_with2 () {
   // empty database
-  var db = ds.empty_db({'age': {':db/index': true}})
+  var db = ds.empty_db()
 
   // add edges, use negative nrs for the nodes
   // this is so that we can `R.uniq` the set and check
